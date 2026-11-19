@@ -469,3 +469,17 @@ body[data-view="inquiry"] .panel-inner {
 .submit:focus-visible {
   border-bottom: 0;
 }
+
+/* Single narrow tall body */
+.panel {
+  width: min(19rem, 100%);
+}
+
+.field textarea {
+  min-height: 24rem;
+  line-height: 1.7;
+}
+
+.js .panel.is-open ~ * , body[data-view="inquiry"] main {
+  cursor: default;
+}

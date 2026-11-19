@@ -4,7 +4,6 @@
   const form = document.getElementById("form");
   const closeButton = document.getElementById("close");
   const statusEl = document.getElementById("status");
-  const inquiryEl = document.getElementById("inquiry");
   const detailsEl = document.getElementById("details");
   const submitButton = document.getElementById("submit");
   const reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -35,9 +34,6 @@
       panel.inert = false;
       closeButton.hidden = false;
       window.requestAnimationFrame(function () {
-        if (document.activeElement !== inquiryEl && document.activeElement !== detailsEl) {
-          inquiryEl.focus({ preventScroll: true });
-        }
         const rect = submitButton.getBoundingClientRect();
         if (rect.bottom > window.innerHeight - 12) {
           submitButton.scrollIntoView({
@@ -99,6 +95,14 @@
     }
   });
 
+  document.querySelector("main").addEventListener("mousedown", function (event) {
+    if (!open || form.hidden) return;
+    const t = event.target;
+    if (t === detailsEl || t.closest(".submit") || t.closest(".close")) return;
+    event.preventDefault();
+    detailsEl.focus({ preventScroll: true });
+  });
+
   form.addEventListener("focusin", function (event) {
     const target = event.target;
     if (!target || target === submitButton) return;
@@ -120,7 +124,7 @@
     event.preventDefault();
     if (sending || form.hidden) return;
 
-    inquiryEl.value = inquiryEl.value.trim();
+    
     detailsEl.value = detailsEl.value.trim();
 
     if (!form.checkValidity()) {
@@ -129,8 +133,7 @@
     }
 
     const payload = {
-      inquiry: inquiryEl.value.toUpperCase(),
-      details: detailsEl.value.toUpperCase(),
+            details: detailsEl.value.toUpperCase(),
       _subject: "Monotropic inquiry",
       _captcha: "false",
       _template: "box",
