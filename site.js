@@ -12,6 +12,50 @@
   let open = false;
   let sending = false;
 
+  // Keep the layout fixed when the mobile keyboard opens.
+  const root = document.documentElement;
+  let lockedWidth = window.innerWidth;
+  function lockHeight() {
+    root.style.setProperty("--lock-h", window.innerHeight + "px");
+    lockedWidth = window.innerWidth;
+  }
+  lockHeight();
+  window.addEventListener("orientationchange", function () {
+    window.setTimeout(lockHeight, 350);
+  });
+  window.addEventListener("resize", function () {
+    if (window.innerWidth !== lockedWidth && document.activeElement !== detailsEl) lockHeight();
+  });
+
+  function fitToKeyboard() {
+    const vv = window.visualViewport;
+    if (!vv || document.activeElement !== detailsEl) {
+      detailsEl.style.maxHeight = "";
+      detailsEl.style.minHeight = "";
+      return;
+    }
+    if (vv.offsetTop || window.scrollY) window.scrollTo(0, 0);
+    const top = detailsEl.getBoundingClientRect().top;
+    const room = Math.floor(vv.height - top - 16);
+    const val = room > 60 && room < detailsEl.offsetHeight + 1 ? room + "px" : "";
+    detailsEl.style.maxHeight = val;
+    detailsEl.style.minHeight = val ? "0" : "";
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", fitToKeyboard);
+    window.visualViewport.addEventListener("scroll", fitToKeyboard);
+  }
+  detailsEl.addEventListener("focus", function () {
+    window.setTimeout(fitToKeyboard, 60);
+    window.setTimeout(fitToKeyboard, 350);
+  });
+  detailsEl.addEventListener("blur", function () {
+    detailsEl.style.maxHeight = "";
+    detailsEl.style.minHeight = "";
+    window.scrollTo(0, 0);
+  });
+  detailsEl.addEventListener("input", fitToKeyboard);
+
   function redraw() {
     if (typeof window.monotropicRedraw === "function") window.monotropicRedraw();
   }
@@ -34,13 +78,6 @@
       panel.inert = false;
       closeButton.hidden = false;
       window.requestAnimationFrame(function () {
-        const rect = submitButton.getBoundingClientRect();
-        if (rect.bottom > window.innerHeight - 12) {
-          submitButton.scrollIntoView({
-            block: "nearest",
-            behavior: reducedQuery.matches ? "auto" : "smooth",
-          });
-        }
         redraw();
       });
       return;
@@ -103,16 +140,6 @@
     detailsEl.focus({ preventScroll: true });
   });
 
-  form.addEventListener("focusin", function (event) {
-    const target = event.target;
-    if (!target || target === submitButton) return;
-    window.setTimeout(function () {
-      target.scrollIntoView({
-        block: "center",
-        behavior: reducedQuery.matches ? "auto" : "smooth",
-      });
-    }, 50);
-  });
 
   form.addEventListener("input", function () {
     if (!statusEl.classList.contains("is-received") && statusEl.textContent === "Not sent.") {

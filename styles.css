@@ -483,3 +483,35 @@ body[data-view="inquiry"] .panel-inner {
 .js .panel.is-open ~ * , body[data-view="inquiry"] main {
   cursor: default;
 }
+
+/* Mobile: lock layout height so the keyboard never shifts INQUIRY? */
+body[data-view="inquiry"] {
+  min-height: var(--lock-h, 100dvh);
+  height: var(--lock-h, 100dvh);
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body[data-view="inquiry"] main {
+  position: fixed;
+  inset: 0;
+  height: var(--lock-h, 100dvh);
+  display: flex;
+  align-items: center;
+}
+
+body[data-view="inquiry"] .cluster {
+  width: min(100%, 68rem);
+}
+
+.field #details {
+  font-size: 16px;
+}
+
+.field {
+  min-height: 0;
+}
+
+#zone {
+  min-height: 26rem;
+}
