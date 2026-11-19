@@ -151,7 +151,7 @@
           Accept: "application/json",
         },
         body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(20000),
+        signal: AbortSignal.timeout(90000),
       });
       const data = await response.json().catch(function () {
         return null;
