@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Monotropic Studios</title>
+    <meta name="description" content="We study systems until the hidden mechanism shows." />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="canonical" href="https://monotropicstudios.com/" />
+    <meta property="og:title" content="Monotropic Studios" />
+    <meta property="og:description" content="We study systems until the hidden mechanism shows." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://monotropicstudios.com/" />
+    <meta property="og:image" content="https://monotropicstudios.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Monotropic Studios" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Monotropic Studios" />
+    <meta name="twitter:description" content="We study systems until the hidden mechanism shows." />
+    <meta name="twitter:image" content="https://monotropicstudios.com/og.png" />
+    <meta name="twitter:image:alt" content="Monotropic Studios" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="preload" href="geist-latin-300.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="styles.css" />
+    <script>document.documentElement.classList.add("js");</script>
+  </head>
+  <body>
+    <canvas id="field" aria-hidden="true"></canvas>
+    <main>
+      <div class="cluster">
+        <h1>
+          <button type="button" id="open" aria-expanded="false" aria-controls="panel">
+            <span class="word">MONOTROPIC</span>
+            <span class="line">We study systems until the hidden mechanism shows.</span>
+          </button>
+        </h1>
+        <div class="panel" id="panel" aria-hidden="true" inert>
+          <div class="panel-clip">
+            <div class="panel-inner">
+              <form id="form" method="post" action="https://formsubmit.co/ajax/7588f879162bfd41a033043c56061629" novalidate>
+                <div class="field">
+                  <label for="inquiry">INQUIRY?</label>
+                  <input id="inquiry" name="inquiry" type="text" autocomplete="off" autocapitalize="characters" maxlength="180" required />
+                </div>
+                <div class="field">
+                  <label for="details">PROVIDE DETAILS:</label>
+                  <textarea id="details" name="details" rows="9" autocomplete="off" autocapitalize="characters" maxlength="5000" required></textarea>
+                </div>
+                <button type="submit" class="submit" id="submit">SUBMIT</button>
+              </form>
+              <p id="status" class="status" role="status" aria-live="polite" tabindex="-1" hidden></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="close" id="close" hidden aria-label="Close">
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+          <path d="M3.5 3.5 L12.5 12.5 M12.5 3.5 L3.5 12.5" />
+        </svg>
+      </button>
+    </main>
+    <script src="field.js"></script>
+    <script src="site.js"></script>
+  </body>
+</html>
