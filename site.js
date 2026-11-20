@@ -117,8 +117,24 @@
     statusEl.classList.remove("is-received");
   }
 
-  openButton.addEventListener("click", function () {
+  function hasTextSelection() {
+    const selection = window.getSelection();
+    return !!(selection && selection.toString().trim().length > 0);
+  }
+
+  function toggleOpen() {
+    // Dragging across "hidden" leaves a selection; do not snap open the inquiry.
+    if (!open && hasTextSelection()) return;
     setOpen(!open);
+  }
+
+  openButton.addEventListener("click", toggleOpen);
+
+  openButton.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleOpen();
+    }
   });
 
   closeButton.addEventListener("click", function () {
@@ -140,6 +156,40 @@
     detailsEl.focus({ preventScroll: true });
   });
 
+  // Stop mobile pull-to-refresh when dragging a thumb down anywhere.
+  // Still allow real scrolling inside a long #details.
+  let touchStartY = 0;
+  document.addEventListener(
+    "touchstart",
+    function (event) {
+      if (event.touches && event.touches.length) touchStartY = event.touches[0].clientY;
+    },
+    { passive: true }
+  );
+  document.addEventListener(
+    "touchmove",
+    function (event) {
+      if (!event.touches || !event.touches.length) {
+        event.preventDefault();
+        return;
+      }
+      const target = event.target;
+      if (target && detailsEl.contains(target)) {
+        const canScroll = detailsEl.scrollHeight > detailsEl.clientHeight + 1;
+        if (canScroll) {
+          const currentY = event.touches[0].clientY;
+          const pullingDown = currentY > touchStartY;
+          const atTop = detailsEl.scrollTop <= 0;
+          const atBottom =
+            detailsEl.scrollTop + detailsEl.clientHeight >= detailsEl.scrollHeight - 1;
+          // Block only the rubber-band / pull-to-refresh edges.
+          if (!(atTop && pullingDown) && !(atBottom && !pullingDown)) return;
+        }
+      }
+      event.preventDefault();
+    },
+    { passive: false }
+  );
 
   form.addEventListener("input", function () {
     if (!statusEl.classList.contains("is-received") && statusEl.textContent === "Not sent.") {
@@ -151,7 +201,6 @@
     event.preventDefault();
     if (sending || form.hidden) return;
 
-    
     detailsEl.value = detailsEl.value.trim();
 
     if (!form.checkValidity()) {
@@ -160,7 +209,7 @@
     }
 
     const payload = {
-            details: detailsEl.value.toUpperCase(),
+      details: detailsEl.value.toUpperCase(),
       _subject: "Monotropic inquiry",
       _captcha: "false",
       _template: "box",
