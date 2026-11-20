@@ -189,7 +189,7 @@
 
     const word = elementRect(document.querySelector(".word"));
     const aimY = word ? word.top + word.height / 2 : height / 2;
-    const centerX = word ? word.left + word.width / 2 : width / 2;
+    const centerX = width / 2;
     const calm = document.body.dataset.view === "inquiry" || !state.hasPointer || state.isTouch;
     const desiredOffset = calm ? 0 : clamp((state.spy - height / 2) * 0.14, -42, 42);
     state.offsetY += (desiredOffset - state.offsetY) * 0.07;
@@ -216,7 +216,8 @@
 
       for (let side = 0; side < 2; side++) {
         const direction = side === 0 ? 1 : -1;
-        let x = direction > 0 ? -8 : width + 8;
+        const startDist = width * 0.5 + 8;
+        let x = direction > 0 ? centerX - startDist : centerX + startDist;
         // baseY tracks ONLY the smooth convergence toward targetY. Wave and magnet
         // are added afterward as pure offsets and are NEVER fed back into baseY,
         // so nothing can compound into kinks or spikes across the step loop.
@@ -226,18 +227,21 @@
         let prevX = null;
         let prevDrawY = 0;
         for (let s = 0; s < steps; s++) {
-          const proximity = 1 - clamp(Math.abs(x - centerX) / (width * 0.5), 0, 1);
+          // Exact mirrored distance from centerX so left and right halves are a
+          // bit-for-bit horizontal mirror at every point and every frame.
+          const distFromCenter = Math.abs(x - centerX);
+          const proximity = 1 - clamp(distFromCenter / (width * 0.5), 0, 1);
           const gather = proximity * proximity;
           const rate = 0.0015 + col * (0.006 + 0.1 * gather);
           baseY += (targetY - baseY) * rate;
 
-          // Intro wave fades out with collimation; a pure, bounded offset.
-          const introWave = Math.sin(x * 0.009 + phase) * (1 - col) * 0.7;
-          // Silk wave: long-wavelength traveling waves flowing inward from the
-          // edges toward the center, max ~14px, pure offset, never accumulated.
+          // Intro wave fades out with collimation; mirrored by distFromCenter.
+          const introWave = Math.sin(distFromCenter * 0.009 + phase) * (1 - col) * 0.7;
+          // Silk wave: long-wavelength traveling waves flowing inward from both
+          // edges toward centerX in exact mirror symmetry (+ now moves crests toward smaller distFromCenter).
           const waveOffset =
-            (Math.sin(x * 0.0075 - direction * now * 0.00055 + phase) * 9.5 +
-              Math.sin(x * 0.0038 - direction * now * 0.00028 + phase * 1.4) * 5.0) *
+            (Math.sin(distFromCenter * 0.0075 + now * 0.00055 + phase) * 9.5 +
+              Math.sin(distFromCenter * 0.0038 + now * 0.00028 + phase * 1.4) * 5.0) *
               (0.25 + 0.75 * (1 - proximity * 0.75)) +
             introWave;
 
