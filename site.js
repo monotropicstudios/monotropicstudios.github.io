@@ -6,7 +6,6 @@
   const statusEl = document.getElementById("status");
   const detailsEl = document.getElementById("details");
   const submitButton = document.getElementById("submit");
-  const reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   const heading = openButton.closest("h1");
   let open = false;
@@ -117,24 +116,8 @@
     statusEl.classList.remove("is-received");
   }
 
-  function hasTextSelection() {
-    const selection = window.getSelection();
-    return !!(selection && selection.toString().trim().length > 0);
-  }
-
-  function toggleOpen() {
-    // Dragging across "hidden" leaves a selection; do not snap open the inquiry.
-    if (!open && hasTextSelection()) return;
+  openButton.addEventListener("click", function () {
     setOpen(!open);
-  }
-
-  openButton.addEventListener("click", toggleOpen);
-
-  openButton.addEventListener("keydown", function (event) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      toggleOpen();
-    }
   });
 
   closeButton.addEventListener("click", function () {

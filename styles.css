@@ -106,41 +106,17 @@ h1 {
   max-width: 100%;
   font: inherit;
   font-weight: 300;
-  transition: opacity 420ms ease;
-}
-
-body[data-view="inquiry"] h1 {
-  opacity: 0;
-  pointer-events: none;
-}
-
-#open {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 100%;
-  margin: 0;
-  padding: 0.35rem 0.15rem 0.15rem;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
   text-align: center;
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  cursor: default;
+  transition: opacity 420ms ease;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
 
-#open:focus {
-  outline: none;
-}
-
-#open:focus-visible {
-  outline: 1px solid rgba(231, 229, 224, 0.9);
-  outline-offset: 12px;
+body[data-view="inquiry"] h1 {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .word {
@@ -152,12 +128,17 @@ body[data-view="inquiry"] h1 {
   text-indent: clamp(0.2em, 2.8vw, 0.46em);
   color: #e7e5e0;
   white-space: nowrap;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .line {
   display: block;
   max-width: 34rem;
   margin-top: clamp(0.95rem, 2.4vw, 1.35rem);
+  margin-inline: auto;
   font-weight: 300;
   font-size: clamp(0.92rem, 2.5vw, 1.02rem);
   line-height: 1.45;
@@ -166,10 +147,48 @@ body[data-view="inquiry"] h1 {
   text-wrap: balance;
   hyphens: none;
   color: #9c9c96;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
-.word,
-.line,
+/* Only the word "hidden" is the clickable inquiry trigger. */
+#open.hidden-trigger {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#open.hidden-trigger:focus {
+  outline: none;
+}
+
+#open.hidden-trigger:hover,
+#open.hidden-trigger:focus-visible {
+  color: #e7e5e0;
+}
+
+#open.hidden-trigger:focus-visible {
+  outline: 1px solid rgba(231, 229, 224, 0.55);
+  outline-offset: 3px;
+}
+
 label,
 button,
 .status {
@@ -178,23 +197,11 @@ button,
   -webkit-touch-callout: none;
 }
 
-.sel-hidden {
-  user-select: text;
-  -webkit-user-select: text;
-  -webkit-touch-callout: default;
-  cursor: text;
-}
-
 textarea,
 input {
   user-select: text;
   -webkit-user-select: text;
   -webkit-touch-callout: default;
-}
-
-#open:hover .line,
-#open:focus-visible .line {
-  color: #c9c9c3;
 }
 
 .panel {
@@ -442,7 +449,8 @@ body[data-view="inquiry"] .panel-inner {
   .status,
   .field label,
   .submit,
-  .close {
+  .close,
+  #open.hidden-trigger {
     color: CanvasText;
   }
 

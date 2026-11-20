@@ -4,7 +4,6 @@
   const context = canvas.getContext("2d", { alpha: false });
   if (!context) return;
 
-  const reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   const bucketCount = 10;
   const buckets = Array.from({ length: bucketCount }, function () {
     return [];
@@ -24,7 +23,6 @@
     isTouch: false,
     offsetY: 0,
     raf: 0,
-    reduced: reducedQuery.matches,
     started: performance.now(),
   };
 
@@ -110,7 +108,7 @@
   }
 
   function collimation(now) {
-    if (state.reduced || document.body.dataset.view === "inquiry") return 1;
+    if (document.body.dataset.view === "inquiry") return 1;
     const t = clamp((now - state.started) / 7800, 0, 1);
     const eased = t * t * (3 - 2 * t);
     return 0.36 + 0.64 * eased;
@@ -125,30 +123,25 @@
   // Magnetic dipole bend around the desktop pointer, plus a faint velocity wake.
   // Returns { dy, glow } where dy is vertical deflection in px and glow is a 0..1 brightness lift.
   function magnetic(x, y) {
-    if (
-      !state.hasPointer ||
-      state.isTouch ||
-      state.reduced ||
-      document.body.dataset.view === "inquiry"
-    ) {
+    if (!state.hasPointer || state.isTouch || document.body.dataset.view === "inquiry") {
       return { dy: 0, glow: 0 };
     }
     const dx = x - state.spx;
     const dy = y - state.spy;
     const distance = Math.hypot(dx, dy);
-    const radius = 240;
+    const radius = 260;
     if (distance > radius || distance < 0.001) return { dy: 0, glow: 0 };
 
     const t = 1 - distance / radius;
     const falloff = t * t * (3 - 2 * t); // smoothstep
     const side = dy >= 0 ? 1 : -1;
-    const peak = 18;
+    const peak = 30;
     const bend = side * peak * falloff * falloff;
 
     const speed = Math.min(Math.hypot(state.pvx, state.pvy), 36);
-    const wake = ((dx * state.pvy - dy * state.pvx) / distance) * falloff * falloff * speed * 0.045;
+    const wake = ((dx * state.pvy - dy * state.pvx) / distance) * falloff * falloff * speed * 0.055;
 
-    const glow = falloff * (0.55 + 0.45 * Math.min(speed / 24, 1));
+    const glow = falloff * (0.7 + 0.3 * Math.min(speed / 24, 1));
     return { dy: bend + wake, glow: glow };
   }
 
@@ -168,20 +161,19 @@
     const word = elementRect(document.querySelector(".word"));
     const aimY = word ? word.top + word.height / 2 : height / 2;
     const centerX = word ? word.left + word.width / 2 : width / 2;
-    const calm = document.body.dataset.view === "inquiry" || state.reduced || !state.hasPointer || state.isTouch;
+    const calm = document.body.dataset.view === "inquiry" || !state.hasPointer || state.isTouch;
     const desiredOffset = calm ? 0 : clamp((state.spy - height / 2) * 0.14, -42, 42);
-    state.offsetY += (desiredOffset - state.offsetY) * (state.reduced ? 1 : 0.07);
-    const breathe = state.reduced ? 0 : Math.sin(now * 0.00028) * 2.4;
+    state.offsetY += (desiredOffset - state.offsetY) * 0.07;
+    const breathe = Math.sin(now * 0.00028) * 2.4;
     const focusY = aimY + state.offsetY + breathe;
     const col = collimation(now);
     const regions = masks();
     const pairs = pairCount(width);
     const step = width < 700 ? 13 : 11;
 
-    // Continuous hypnotic flow after (and during) collimation.
-    // Primary traveling harmonic + slower cross-harmonic; inward pulse of luminosity.
-    const motion = state.reduced ? 0 : 1;
-    const pulse = state.reduced ? 0 : 0.5 + 0.5 * Math.sin(now * 0.00055);
+    // Continuous hypnotic flow: strong traveling silk waves + inward luminosity pulse.
+    // Never frozen by prefers-reduced-motion; Tim wants the living field on his devices.
+    const pulse = 0.5 + 0.5 * Math.sin(now * 0.00055);
 
     for (let b = 0; b < bucketCount; b++) buckets[b].length = 0;
 
@@ -206,11 +198,12 @@
           const rate = 0.0015 + col * (0.006 + 0.1 * gather);
 
           // Intro wave fades with collimation; continuous silk waves keep running forever.
+          // Layered harmonics: ~6-12px of graceful living undulation along each line.
           const introWave = Math.sin(x * 0.009 + phase) * (1 - col) * 0.7;
           const silk =
-            motion *
-            (Math.sin(x * 0.011 - direction * now * 0.00042 + phase) * 1.55 +
-              Math.sin(x * 0.0047 + direction * now * 0.00019 + phase * 1.7) * 0.95);
+            Math.sin(x * 0.011 - direction * now * 0.00042 + phase) * 7.2 +
+            Math.sin(x * 0.0047 + direction * now * 0.00019 + phase * 1.7) * 3.8 +
+            Math.sin(x * 0.021 - direction * now * 0.00031 + phase * 0.6) * 1.6;
           const mag = magnetic(x, y);
           y += (targetY - y) * rate + introWave + silk + mag.dy;
           x += direction * step;
@@ -221,15 +214,15 @@
           const dist = Math.abs(previousY - focusY) / (height * 0.5);
           const along = 0.82 + 0.18 * (s / steps);
 
-          // Inward luminosity pulse: brighter near center on a slow meditative cadence.
+          // Inward luminosity pulse: silver-gray light traveling from edges toward center.
+          // Alpha smoothly breathes between ~0.12 and ~0.46.
           const inward = Math.sin(proximity * Math.PI * 0.92 - now * 0.00048 + phase * 0.2);
           const pulseLift = 0.55 + 0.45 * ((inward + 1) * 0.5) * (0.65 + 0.35 * pulse);
-          const base = 0.14 + 0.22 * Math.pow(Math.max(0, 1 - dist), 1.15);
-          const alpha = (base * along * keep * pulseLift + mag.glow * 0.08 * keep) ;
-          // Cap near ~0.42 peak so the field stays dark and restrained.
-          const capped = Math.min(alpha, 0.42);
+          const base = 0.16 + 0.26 * Math.pow(Math.max(0, 1 - dist), 1.15);
+          const alpha = base * along * keep * pulseLift + mag.glow * 0.12 * keep;
+          const capped = Math.min(alpha, 0.46);
           if (capped > 0.03) {
-            const index = Math.min(bucketCount - 1, Math.floor((capped / 0.42) * bucketCount));
+            const index = Math.min(bucketCount - 1, Math.floor((capped / 0.46) * bucketCount));
             buckets[index].push(previousX, previousY, x, y);
           }
         }
@@ -239,7 +232,7 @@
     for (let b = 0; b < bucketCount; b++) {
       const bucket = buckets[b];
       if (!bucket.length) continue;
-      const alpha = ((b + 0.5) / bucketCount) * 0.42;
+      const alpha = ((b + 0.5) / bucketCount) * 0.46;
       context.strokeStyle = "rgba(214, 217, 223, " + alpha.toFixed(3) + ")";
       context.beginPath();
       for (let p = 0; p < bucket.length; p += 4) {
@@ -251,8 +244,8 @@
 
     // Smooth the pointer toward the live coords so the field feels heavy and fluid.
     if (state.hasPointer && !state.isTouch) {
-      state.spx += (state.px - state.spx) * 0.18;
-      state.spy += (state.py - state.spy) * 0.18;
+      state.spx += (state.px - state.spx) * 0.16;
+      state.spy += (state.py - state.spy) * 0.16;
     }
     state.pvx *= 0.86;
     state.pvy *= 0.86;
@@ -260,13 +253,13 @@
 
   function frame(now) {
     draw(now);
-    if (!state.reduced && !document.hidden) state.raf = window.requestAnimationFrame(frame);
+    if (!document.hidden) state.raf = window.requestAnimationFrame(frame);
   }
 
   function start() {
     window.cancelAnimationFrame(state.raf);
     state.raf = 0;
-    if (state.reduced || document.hidden) {
+    if (document.hidden) {
       draw(performance.now());
       return;
     }
@@ -302,10 +295,6 @@
     state.hasPointer = false;
   });
 
-  reducedQuery.addEventListener("change", function () {
-    state.reduced = reducedQuery.matches;
-    start();
-  });
   document.addEventListener("visibilitychange", start);
   window.addEventListener("resize", resize);
 
