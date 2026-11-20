@@ -18,6 +18,8 @@
     py: 0,
     spx: 0,
     spy: 0,
+    pvx: 0,
+    pvy: 0,
     hasPointer: false,
     isTouch: false,
     pointerStrength: 0,
@@ -62,6 +64,27 @@
     return parseFloat(style.opacity) > 0.05;
   }
 
+  function masks() {
+    const list = [];
+    if (headingVisible()) {
+      const word = elementRect(document.querySelector(".word"));
+      const line = elementRect(document.querySelector(".line"));
+      const identity = unionRect(word, line);
+      if (identity) list.push(identity);
+    }
+    const panel = document.getElementById("panel");
+    if (panel && panel.classList.contains("is-open")) {
+      const rect = elementRect(panel);
+      if (rect) list.push(rect);
+    }
+    const status = document.getElementById("status");
+    if (status && !status.hidden) {
+      const rect = elementRect(status);
+      if (rect) list.push(rect);
+    }
+    return list;
+  }
+
   function unionRect(a, b) {
     if (!a) return b;
     if (!b) return a;
@@ -72,46 +95,16 @@
     return { left: left, top: top, right: right, bottom: bottom, width: right - left, height: bottom - top };
   }
 
-  function masks() {
-    const list = [];
-    if (headingVisible()) {
-      const word = elementRect(document.querySelector(".word"));
-      const line = elementRect(document.querySelector(".line"));
-      const identity = unionRect(word, line);
-      // Soft dim behind landing typography so strands pass continuously through
-      // instead of being cut in half.
-      if (identity) list.push({ rect: identity, floor: 0.28, feather: 64 });
-    }
-    const panel = document.getElementById("panel");
-    if (panel && panel.classList.contains("is-open")) {
-      const rect = elementRect(panel);
-      if (rect) list.push({ rect: rect, floor: 0.14, feather: 56 });
-    }
-    const status = document.getElementById("status");
-    if (status && !status.hidden) {
-      const rect = elementRect(status);
-      if (rect) list.push({ rect: rect, floor: 0.18, feather: 48 });
-    }
-    return list;
-  }
-
   function keepAlpha(x, y, regions) {
+    const feather = 48;
     let keep = 1;
     for (let i = 0; i < regions.length; i++) {
-      const entry = regions[i];
-      const rect = entry.rect;
-      const feather = entry.feather;
-      const floor = entry.floor;
+      const rect = regions[i];
       const dx = Math.max(rect.left - x, 0, x - rect.right);
       const dy = Math.max(rect.top - y, 0, y - rect.bottom);
       const outside = Math.hypot(dx, dy);
-      if (outside === 0) {
-        keep *= floor;
-      } else if (outside < feather) {
-        const u = outside / feather;
-        const smooth = u * u * (3 - 2 * u);
-        keep *= floor + (1 - floor) * smooth;
-      }
+      if (outside === 0) return 0;
+      if (outside < feather) keep *= outside / feather;
     }
     return keep;
   }
@@ -133,7 +126,7 @@
     const pad = 96;
     let factor = 1;
     for (let i = 0; i < regions.length; i++) {
-      const rect = regions[i].rect;
+      const rect = regions[i];
       const dx = Math.max(rect.left - x, 0, x - rect.right);
       const dy = Math.max(rect.top - y, 0, y - rect.bottom);
       const outside = Math.hypot(dx, dy);
@@ -146,8 +139,6 @@
     return factor;
   }
 
-  // Pure smoothed-position Gaussian parting around the desktop pointer,
-  // smoothly calmed near the text area so strands stay steady behind text.
   function magnetic(x, baseY, proximity, regions) {
     const strength = state.pointerStrength;
     if (strength < 0.001) return { dy: 0, glow: 0 };
@@ -195,17 +186,10 @@
     const regions = masks();
     const pairs = pairCount(width);
     const step = width < 700 ? 8 : 6;
-    const halfW = width * 0.5;
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00055);
-    const minSpread = 0.055 + (1 - col) * 0.24;
-    const pinchPower = 1.65 + col * 0.85;
-    const smoothOrigin = Math.sqrt(2400);
 
     for (let b = 0; b < bucketCount; b++) buckets[b].length = 0;
 
-    // Each strand runs continuously as ONE unbroken curve from left edge (-8)
-    // all the way across to right edge (width + 8), mirrored symmetrically
-    // around centerX with zero seam or corner at the center.
     for (let i = 0; i < pairs; i++) {
       const t = (i + 0.5) / pairs;
       const centered = (t - 0.5) * 2;
@@ -213,49 +197,54 @@
       const yStart = (0.5 + shaped * 0.48) * height;
       const phase = i * 0.37;
 
-      let prevX = null;
-      let prevDrawY = 0;
-      for (let x = -8; x <= width + 8; x += step) {
-        const distFromCenter = Math.abs(x - centerX);
-        const u = clamp(distFromCenter / halfW, 0, 1);
-        const proximity = 1 - u;
+      for (let side = 0; side < 2; side++) {
+        const direction = side === 0 ? 1 : -1;
+        const startDist = width * 0.5 + 8;
+        let x = direction > 0 ? centerX - startDist : centerX + startDist;
+        let baseY = yStart;
+        const targetY = focusY + (yStart - focusY) * 0.055;
+        const steps = Math.ceil((width + 40) / step);
+        let prevX = null;
+        let prevDrawY = 0;
+        for (let s = 0; s < steps; s++) {
+          const distFromCenter = Math.abs(x - centerX);
+          const proximity = 1 - clamp(distFromCenter / (width * 0.5), 0, 1);
+          const gather = proximity * proximity;
+          const rate = 0.0015 + col * (0.006 + 0.1 * gather);
+          baseY += (targetY - baseY) * rate;
 
-        // Closed-form symmetric pinch: horizontal tangent at centerX (u = 0),
-        // fanning out smoothly to yStart at both left and right edges (u = 1).
-        const spread = minSpread + (1 - minSpread) * Math.pow(u, pinchPower);
-        const baseY = focusY + (yStart - focusY) * spread;
+          const introWave = Math.sin(distFromCenter * 0.009 + phase) * (1 - col) * 0.7;
+          const waveOffset =
+            (Math.sin(distFromCenter * 0.0075 + now * 0.00055 + phase) * 9.5 +
+              Math.sin(distFromCenter * 0.0038 + now * 0.00028 + phase * 1.4) * 5.0) *
+              (0.25 + 0.75 * (1 - proximity * 0.75)) +
+            introWave;
 
-        // Smooth C1-continuous mirrored distance so the wave has zero cusp at centerX.
-        const smoothDist = Math.sqrt(distFromCenter * distFromCenter + 2400) - smoothOrigin;
-        const introWave = Math.sin(smoothDist * 0.009 + phase) * (1 - col) * 0.7;
-        const waveOffset =
-          (Math.sin(smoothDist * 0.0075 + now * 0.00055 + phase) * 9.5 +
-            Math.sin(smoothDist * 0.0038 + now * 0.00028 + phase * 1.4) * 5.0) *
-            (0.25 + 0.75 * (1 - proximity * 0.75)) +
-          introWave;
+          const mag = magnetic(x, baseY, proximity, regions);
+          const drawY = baseY + waveOffset + mag.dy;
+          if (!Number.isFinite(drawY)) break;
 
-        const mag = magnetic(x, baseY, proximity, regions);
-        const drawY = baseY + waveOffset + mag.dy;
-        if (!Number.isFinite(drawY)) break;
+          if (prevX !== null) {
+            const keep = Math.min(keepAlpha(prevX, prevDrawY, regions), keepAlpha(x, drawY, regions));
+            const dist = Math.abs(prevDrawY - focusY) / (height * 0.5);
+            const along = 0.82 + 0.18 * (s / steps);
 
-        if (prevX !== null) {
-          const keep = Math.min(keepAlpha(prevX, prevDrawY, regions), keepAlpha(x, drawY, regions));
-          const dist = Math.abs(prevDrawY - focusY) / (height * 0.5);
-          const along = 0.84 + 0.16 * proximity;
-
-          const inward = Math.sin(proximity * Math.PI * 0.92 - now * 0.00048 + phase * 0.2);
-          const pulseLift = 0.55 + 0.45 * ((inward + 1) * 0.5) * (0.65 + 0.35 * pulse);
-          const base = 0.16 + 0.26 * Math.pow(Math.max(0, 1 - dist), 1.15);
-          const alpha = base * along * keep * pulseLift + mag.glow * keep;
-          const capped = Math.min(alpha, 0.44);
-          if (capped > 0.025) {
-            const index = Math.min(bucketCount - 1, Math.floor((capped / 0.44) * bucketCount));
-            buckets[index].push(prevX, prevDrawY, x, drawY);
+            const inward = Math.sin(proximity * Math.PI * 0.92 - now * 0.00048 + phase * 0.2);
+            const pulseLift = 0.55 + 0.45 * ((inward + 1) * 0.5) * (0.65 + 0.35 * pulse);
+            const base = 0.16 + 0.26 * Math.pow(Math.max(0, 1 - dist), 1.15);
+            const alpha = base * along * keep * pulseLift + mag.glow * keep;
+            const capped = Math.min(alpha, 0.44);
+            if (capped > 0.03) {
+              const index = Math.min(bucketCount - 1, Math.floor((capped / 0.44) * bucketCount));
+              buckets[index].push(prevX, prevDrawY, x, drawY);
+            }
           }
-        }
 
-        prevX = x;
-        prevDrawY = drawY;
+          prevX = x;
+          prevDrawY = drawY;
+          x += direction * step;
+          if ((direction > 0 && x > centerX) || (direction < 0 && x < centerX)) break;
+        }
       }
     }
 
@@ -279,6 +268,8 @@
       state.spx += (state.px - state.spx) * 0.11;
       state.spy += (state.py - state.spy) * 0.11;
     }
+    state.pvx *= 0.86;
+    state.pvy *= 0.86;
   }
 
   function frame(now) {
@@ -300,7 +291,10 @@
     if (typeof event.clientX !== "number") return;
     const isTouch = event.pointerType === "touch";
     state.isTouch = isTouch;
-    if (!state.hasPointer) {
+    if (state.hasPointer) {
+      state.pvx = event.clientX - state.px;
+      state.pvy = event.clientY - state.py;
+    } else {
       state.spx = event.clientX;
       state.spy = event.clientY;
     }
