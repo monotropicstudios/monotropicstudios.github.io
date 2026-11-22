@@ -27,7 +27,7 @@
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preload" href="/geist-latin-300.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="/audiobook.css?v=1" />
+    <link rel="stylesheet" href="/audiobook.css?v=2" />
     <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -128,6 +128,7 @@
     </script>
   </head>
   <body>
+    <canvas id="field" aria-hidden="true"></canvas>
     <main>
       <a class="home" href="/">MONOTROPIC</a>
       <img class="cover" src="/witness-me/cover.jpg?v=2" width="720" height="900" alt="Witness Me, book cover" />
@@ -167,5 +168,6 @@
     </main>
     <script id="book-data" type="application/json">{"id": "witness-me", "title": "Witness Me", "author": "Monotropic Studios", "cover": "/witness-me/cover.jpg?v=2", "chapters": [{"title": "Opening credits", "src": "/witness-me/audio/00.mp3?v=3", "duration": 7}, {"title": "Chapter 1", "src": "/witness-me/audio/01.mp3?v=5", "duration": 819}]}</script>
     <script src="/audiobook.js?v=2" defer></script>
+      <script src="/field.js?v=13"></script>
   </body>
 </html>

@@ -28,7 +28,7 @@
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preload" href="/geist-latin-300.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="/audiobook.css?v=1" />
+    <link rel="stylesheet" href="/audiobook.css?v=2" />
     <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -137,6 +137,7 @@
     </script>
   </head>
   <body>
+    <canvas id="field" aria-hidden="true"></canvas>
     <main>
       <a class="home" href="/">MONOTROPIC</a>
       <img class="cover" src="/witness-me/cover.jpg?v=2" width="720" height="900" alt="Witness Me, book cover" />
@@ -185,5 +186,6 @@
     </script>
     <script id="book-data" type="application/json">{"id": "witness-me", "title": "Witness Me", "author": "Monotropic Studios", "cover": "/witness-me/cover.jpg?v=2", "chapters": [{"title": "Chapter 1", "src": "/r/587aa8de1de0ba31/witness-me/audio/01.mp3?v=5", "duration": 819}, {"title": "Chapter 2", "src": "/r/587aa8de1de0ba31/witness-me/audio/02.mp3?v=5", "duration": 1735}, {"title": "Chapter 3", "src": "/r/587aa8de1de0ba31/witness-me/audio/03.mp3?v=5", "duration": 1884}, {"title": "Chapter 4", "src": "/r/587aa8de1de0ba31/witness-me/audio/04.mp3?v=5", "duration": 1670}, {"title": "Chapter 5", "src": "/r/587aa8de1de0ba31/witness-me/audio/05.mp3?v=5", "duration": 1987}, {"title": "Chapter 6", "src": "/r/587aa8de1de0ba31/witness-me/audio/06.mp3?v=5", "duration": 1051}, {"title": "Chapter 7", "src": "/r/587aa8de1de0ba31/witness-me/audio/07.mp3?v=5", "duration": 1155}, {"title": "Chapter 8", "src": "/r/587aa8de1de0ba31/witness-me/audio/08.mp3?v=5", "duration": 1738}, {"title": "Chapter 9", "src": "/r/587aa8de1de0ba31/witness-me/audio/09.mp3?v=5", "duration": 1837}, {"title": "Chapter 10", "src": "/r/587aa8de1de0ba31/witness-me/audio/10.mp3?v=5", "duration": 1644}, {"title": "Chapter 11", "src": "/r/587aa8de1de0ba31/witness-me/audio/11.mp3?v=5", "duration": 942}, {"title": "Chapter 12", "src": "/r/587aa8de1de0ba31/witness-me/audio/12.mp3?v=5", "duration": 1796}, {"title": "Chapter 13", "src": "/r/587aa8de1de0ba31/witness-me/audio/13.mp3?v=5", "duration": 1798}]}</script>
     <script src="/audiobook.js?v=1" defer></script>
+      <script src="/field.js?v=13"></script>
   </body>
 </html>

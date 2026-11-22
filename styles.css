@@ -683,6 +683,39 @@ body[data-view="inquiry"] .field textarea {
   }
 }
 
+body[data-view="inquiry"] .panel-inner {
+  justify-content: center;
+  align-items: center;
+  padding-block: max(1.25rem, env(safe-area-inset-top), env(safe-area-inset-bottom));
+  padding-inline: max(1.25rem, env(safe-area-inset-right), env(safe-area-inset-left));
+}
+
+body[data-view="inquiry"] .works {
+  flex: 0 0 auto;
+}
+
+body[data-view="inquiry"] #form {
+  width: min(20rem, calc(100% - 2.5rem));
+  margin-top: 1.6rem;
+}
+
+body[data-view="inquiry"] .field {
+  margin: 0 0 0.55rem;
+}
+
+body[data-view="inquiry"] #zone {
+  min-height: 0;
+  margin-bottom: 0.55rem;
+}
+
+body[data-view="inquiry"] .field textarea,
+body[data-view="inquiry"] .field textarea:focus {
+  min-height: 6.5rem;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: transparent;
+}
+
 .honey {
   position: absolute;
   width: 1px;
