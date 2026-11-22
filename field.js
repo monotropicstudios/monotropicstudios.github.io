@@ -166,7 +166,7 @@
   }
 
   function place(n, now) {
-    const t = now * 0.000065;
+    const t = now * 0.0002;
     return {
       x: n.x + Math.sin(t + n.p) * n.ax + Math.sin(t * 0.53 + n.q) * n.ax * 0.38,
       y: n.y + Math.cos(t * 0.71 + n.q) * n.ay + Math.sin(t * 0.37 + n.p) * n.ay * 0.32,
@@ -242,7 +242,7 @@
       const a = placed[edge.a];
       const bpt = placed[edge.b];
       const span = Math.hypot(bpt.x - a.x, bpt.y - a.y) || 1;
-      const bow = Math.sin(now * 0.00009 + edge.p) * span * 0.22;
+      const bow = Math.sin(now * 0.00016 + edge.p) * span * 0.22;
       const nx = -(bpt.y - a.y) / span;
       const ny = (bpt.x - a.x) / span;
       const mx = (a.x + bpt.x) / 2 + nx * bow;
