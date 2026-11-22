@@ -175,23 +175,31 @@
     { passive: false }
   );
 
-  function fieldError(input, message) {
-    const err = document.getElementById(input.id + "-error");
-    const bad = Boolean(message);
-    input.setAttribute("aria-invalid", bad ? "true" : "false");
-    if (!err) return;
-    err.hidden = !bad;
-    err.textContent = message || "";
-  }
-
   function validate() {
     detailsEl.value = detailsEl.value.trim();
-    fieldError(detailsEl, detailsEl.value ? "" : "Enter your message.");
     if (!detailsEl.value) {
       detailsEl.focus({ preventScroll: true });
       return false;
     }
     return true;
+  }
+
+  function settle() {
+    var works = document.querySelector(".works");
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var first = works.getBoundingClientRect();
+    document.body.classList.add("is-sent");
+    if (reduced) return;
+    var last = works.getBoundingClientRect();
+    var dx = first.left + first.width / 2 - (last.left + last.width / 2);
+    var dy = first.top + first.height / 2 - (last.top + last.height / 2);
+    works.animate(
+      [
+        { transform: "translate(" + dx + "px, " + dy + "px)" },
+        { transform: "translate(0px, 0px)" }
+      ],
+      { duration: 780, easing: "cubic-bezier(0.22, 0.7, 0.2, 1)", fill: "both" }
+    );
   }
 
   function depart(text) {
@@ -243,9 +251,8 @@
     });
   }
 
-  form.addEventListener("input", function (event) {
-    if (event.target && event.target.id) fieldError(event.target, "");
-    if (!statusEl.classList.contains("is-received") && statusEl.textContent.indexOf("Not sent") === 0) {
+  form.addEventListener("input", function () {
+    if (!statusEl.classList.contains("is-received") && statusEl.textContent === "Not sent.") {
       clearStatus();
     }
   });
@@ -256,7 +263,7 @@
     clearStatus();
     if (!validate()) return;
     if (form.querySelector("[name='_honey']").value) {
-      depart(detailsEl.value).then(function () { form.reset(); });
+      depart(detailsEl.value).then(settle);
       return;
     }
 
@@ -269,8 +276,6 @@
 
     sending = true;
     submitButton.disabled = true;
-    submitButton.textContent = "Sending";
-    submitButton.setAttribute("aria-busy", "true");
     form.setAttribute("aria-busy", "true");
     let sent = false;
 
@@ -291,17 +296,17 @@
         sent = true;
         var message = detailsEl.value;
         await depart(message);
-        form.reset();
+        settle();
         clearStatus();
       } else showError();
     } catch (error) {
       showError();
     } finally {
-      sending = false;
-      submitButton.disabled = false;
-      submitButton.textContent = "Send inquiry";
-      submitButton.removeAttribute("aria-busy");
-      form.removeAttribute("aria-busy");
+      if (!sent) {
+        sending = false;
+        submitButton.disabled = false;
+        form.removeAttribute("aria-busy");
+      }
     }
   });
 })();

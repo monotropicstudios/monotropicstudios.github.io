@@ -10,7 +10,6 @@
   function show(text) {
     status.hidden = false;
     status.textContent = text;
-    status.classList.remove("is-received");
   }
 
   function clearStatus() {
@@ -18,23 +17,27 @@
     status.textContent = "";
   }
 
-  function fieldError(input, message) {
-    const err = document.getElementById(input.id + "-error");
-    const bad = Boolean(message);
-    input.setAttribute("aria-invalid", bad ? "true" : "false");
-    if (!err) return;
-    err.hidden = !bad;
-    err.textContent = message || "";
-  }
-
   function validate() {
     details.value = details.value.trim();
-    fieldError(details, details.value ? "" : "Enter your message.");
     if (!details.value) {
       details.focus();
       return false;
     }
     return true;
+  }
+
+  function settle() {
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var layer = document.createElement("nav");
+    layer.className = "arrived";
+    layer.setAttribute("aria-label", "Studio");
+    layer.innerHTML = '<a href="/inventions/">Inventions</a><a href="/books/">Books</a><a href="/software/">Software</a>';
+    document.body.appendChild(layer);
+    if (reduced) return;
+    layer.animate(
+      [{ opacity: 0 }, { opacity: 1 }],
+      { duration: 700, easing: "cubic-bezier(0.22, 0.7, 0.2, 1)", fill: "both" }
+    );
   }
 
   function depart(text) {
@@ -86,9 +89,8 @@
     });
   }
 
-  form.addEventListener("input", function (event) {
-    if (event.target && event.target.id) fieldError(event.target, "");
-    if (status.textContent.indexOf("Not sent") === 0) clearStatus();
+  form.addEventListener("input", function () {
+    if (status.textContent === "Not sent.") clearStatus();
   });
 
   form.addEventListener("submit", async function (event) {
@@ -98,15 +100,14 @@
     if (!validate()) return;
     if (form.querySelector("[name='_honey']").value) {
       await depart(details.value);
-      form.reset();
+      settle();
       return;
     }
 
     sending = true;
     submit.disabled = true;
-    submit.textContent = "Sending";
-    submit.setAttribute("aria-busy", "true");
     form.setAttribute("aria-busy", "true");
+    var sent = false;
 
     try {
       const response = await fetch("https://formsubmit.co/ajax/7588f879162bfd41a033043c56061629", {
@@ -127,21 +128,22 @@
         return null;
       });
       if (data && (data.success === true || data.success === "true")) {
+        sent = true;
         var message = details.value;
         await depart(message);
-        form.reset();
+        settle();
         clearStatus();
       } else {
-        show("Not sent. Try again.");
+        show("Not sent.");
       }
     } catch (error) {
-      show("Not sent. Try again.");
+      show("Not sent.");
     } finally {
-      sending = false;
-      submit.disabled = false;
-      submit.textContent = "Send inquiry";
-      submit.removeAttribute("aria-busy");
-      form.removeAttribute("aria-busy");
+      if (!sent) {
+        sending = false;
+        submit.disabled = false;
+        form.removeAttribute("aria-busy");
+      }
     }
   });
 })();
