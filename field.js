@@ -46,8 +46,7 @@
     state.w = w;
     state.h = h;
     state.dpr = dpr;
-    buildGraph(w, h);
-    draw(reduceMotion ? 0 : performance.now());
+    draw(performance.now());
   }
 
   function elementRect(node) {
@@ -97,7 +96,7 @@
   }
 
   function keepAlpha(x, y, regions) {
-    const feather = 78;
+    const feather = 48;
     let keep = 1;
     for (let i = 0; i < regions.length; i++) {
       const rect = regions[i];
@@ -117,60 +116,10 @@
     return 0.36 + 0.64 * eased;
   }
 
-  let graph = null;
-  const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let reduceMotion = reduceQuery.matches;
-
-  function hash01(n) {
-    const x = Math.sin(n * 127.1) * 43758.5453;
-    return x - Math.floor(x);
-  }
-
-  function buildGraph(w, h) {
-    const count = w < 560 ? 28 : w < 1000 ? 42 : 56;
-    const cols = Math.max(4, Math.round(Math.sqrt(count * (w / Math.max(h, 1)))));
-    const rows = Math.max(3, Math.ceil(count / cols));
-    const cw = w / cols;
-    const rh = h / rows;
-    const nodes = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const ux = hash01(r * 19.1 + c * 7.7 + 1.3);
-        const uy = hash01(r * 3.1 + c * 13.9 + 4.2);
-        nodes.push({
-          x: (c + 0.16 + ux * 0.68) * cw,
-          y: (r + 0.16 + uy * 0.68) * rh,
-          ax: 16 + ux * 18,
-          ay: 14 + uy * 16,
-          p: ux * Math.PI * 2,
-          q: uy * Math.PI * 2,
-        });
-      }
-    }
-    const edges = [];
-    const reach = Math.hypot(cw, rh) * 1.45;
-    for (let i = 0; i < nodes.length; i++) {
-      const near = [];
-      for (let j = i + 1; j < nodes.length; j++) {
-        const d = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
-        if (d < reach) near.push({ j: j, d: d });
-      }
-      near.sort(function (a, b) { return a.d - b.d; });
-      const links = Math.min(3, near.length);
-      for (let k = 0; k < links; k++) {
-        if (k === 2 && hash01(i + 0.2) < 0.45) continue;
-        edges.push({ a: i, b: near[k].j, p: hash01(i * 1.7 + near[k].j) * Math.PI * 2 });
-      }
-    }
-    graph = { nodes: nodes, edges: edges };
-  }
-
-  function place(n, now) {
-    const t = now * 0.0002;
-    return {
-      x: n.x + Math.sin(t + n.p) * n.ax + Math.sin(t * 0.53 + n.q) * n.ax * 0.38,
-      y: n.y + Math.cos(t * 0.71 + n.q) * n.ay + Math.sin(t * 0.37 + n.p) * n.ay * 0.32,
-    };
+  function pairCount(width) {
+    if (width < 520) return 16;
+    if (width < 960) return 22;
+    return 30;
   }
 
   function textHalo(x, y, regions) {
@@ -225,58 +174,91 @@
     context.lineWidth = 1 / dpr;
     context.lineCap = "butt";
 
-    if (!graph) buildGraph(width, height);
+    const word = elementRect(document.querySelector(".word"));
+    const aimY = word ? word.top + word.height / 2 : height / 2;
+    const centerX = width / 2;
+    const calm = document.body.dataset.view === "inquiry" || !state.hasPointer || state.isTouch;
+    const desiredOffset = calm ? 0 : clamp((state.spy - height / 2) * 0.14, -42, 42);
+    state.offsetY += (desiredOffset - state.offsetY) * 0.07;
+    const breathe = Math.sin(now * 0.00028) * 2.4;
+    const focusY = aimY + state.offsetY + breathe;
+    const col = collimation(now);
     const regions = masks();
-    if (!document.getElementById("open")) {
-      const column = elementRect(document.querySelector("main"));
-      if (column) regions.push(column);
-    }
-    const nodes = graph.nodes;
-    const placed = new Array(nodes.length);
-    for (let i = 0; i < nodes.length; i++) placed[i] = place(nodes[i], now);
+    const pairs = pairCount(width);
+    const step = width < 700 ? 8 : 6;
+    const pulse = 0.5 + 0.5 * Math.sin(now * 0.00055);
 
     for (let b = 0; b < bucketCount; b++) buckets[b].length = 0;
-    const edges = graph.edges;
-    for (let e = 0; e < edges.length; e++) {
-      const edge = edges[e];
-      const a = placed[edge.a];
-      const bpt = placed[edge.b];
-      const span = Math.hypot(bpt.x - a.x, bpt.y - a.y) || 1;
-      const bow = Math.sin(now * 0.00016 + edge.p) * span * 0.22;
-      const nx = -(bpt.y - a.y) / span;
-      const ny = (bpt.x - a.x) / span;
-      const mx = (a.x + bpt.x) / 2 + nx * bow;
-      const my = (a.y + bpt.y) / 2 + ny * bow;
-      const keep = Math.min(keepAlpha(a.x, a.y, regions), keepAlpha(bpt.x, bpt.y, regions), keepAlpha(mx, my, regions));
-      if (keep < 0.04) continue;
-      const pulse = 0.62 + 0.38 * (0.5 + 0.5 * Math.sin(now * 0.0008 + edge.p));
-      const alpha = Math.min(0.22, (0.07 + 0.1 * pulse) * keep);
-      const index = Math.min(bucketCount - 1, Math.floor((alpha / 0.22) * bucketCount));
-      buckets[index].push(a.x, a.y, mx, my, bpt.x, bpt.y);
+
+    for (let i = 0; i < pairs; i++) {
+      const t = (i + 0.5) / pairs;
+      const centered = (t - 0.5) * 2;
+      const shaped = Math.sign(centered) * Math.pow(Math.abs(centered), 0.82);
+      const yStart = (0.5 + shaped * 0.48) * height;
+      const phase = i * 0.37;
+
+      for (let side = 0; side < 2; side++) {
+        const direction = side === 0 ? 1 : -1;
+        const startDist = width * 0.5 + 8;
+        let x = direction > 0 ? centerX - startDist : centerX + startDist;
+        let baseY = yStart;
+        const targetY = focusY + (yStart - focusY) * 0.055;
+        const steps = Math.ceil((width + 40) / step);
+        let prevX = null;
+        let prevDrawY = 0;
+        for (let s = 0; s < steps; s++) {
+          const distFromCenter = Math.abs(x - centerX);
+          const proximity = 1 - clamp(distFromCenter / (width * 0.5), 0, 1);
+          const gather = proximity * proximity;
+          const rate = 0.0015 + col * (0.006 + 0.1 * gather);
+          baseY += (targetY - baseY) * rate;
+
+          const introWave = Math.sin(distFromCenter * 0.009 + phase) * (1 - col) * 0.7;
+          const waveOffset =
+            (Math.sin(distFromCenter * 0.0075 + now * 0.00055 + phase) * 9.5 +
+              Math.sin(distFromCenter * 0.0038 + now * 0.00028 + phase * 1.4) * 5.0) *
+              (0.25 + 0.75 * (1 - proximity * 0.75)) +
+            introWave;
+
+          const mag = magnetic(x, baseY, proximity, regions);
+          const drawY = baseY + waveOffset + mag.dy;
+          if (!Number.isFinite(drawY)) break;
+
+          if (prevX !== null) {
+            const keep = Math.min(keepAlpha(prevX, prevDrawY, regions), keepAlpha(x, drawY, regions));
+            const dist = Math.abs(prevDrawY - focusY) / (height * 0.5);
+            const along = 0.82 + 0.18 * (s / steps);
+
+            const inward = Math.sin(proximity * Math.PI * 0.92 - now * 0.00048 + phase * 0.2);
+            const pulseLift = 0.55 + 0.45 * ((inward + 1) * 0.5) * (0.65 + 0.35 * pulse);
+            const base = 0.34 + 0.46 * Math.pow(Math.max(0, 1 - dist), 1.15);
+            const alpha = base * along * keep * pulseLift + mag.glow * keep;
+            const capped = Math.min(alpha, 0.86);
+            if (capped > 0.05) {
+              const index = Math.min(bucketCount - 1, Math.floor((capped / 0.86) * bucketCount));
+              buckets[index].push(prevX, prevDrawY, x, drawY);
+            }
+          }
+
+          prevX = x;
+          prevDrawY = drawY;
+          x += direction * step;
+          if ((direction > 0 && x > centerX) || (direction < 0 && x < centerX)) break;
+        }
+      }
     }
 
     for (let b = 0; b < bucketCount; b++) {
       const bucket = buckets[b];
       if (!bucket.length) continue;
-      const alpha = ((b + 0.5) / bucketCount) * 0.22;
+      const alpha = ((b + 0.5) / bucketCount) * 0.86;
       context.strokeStyle = "rgba(255, 255, 255, " + alpha.toFixed(3) + ")";
       context.beginPath();
-      for (let p = 0; p < bucket.length; p += 6) {
+      for (let p = 0; p < bucket.length; p += 4) {
         context.moveTo(bucket[p], bucket[p + 1]);
-        context.quadraticCurveTo(bucket[p + 2], bucket[p + 3], bucket[p + 4], bucket[p + 5]);
+        context.lineTo(bucket[p + 2], bucket[p + 3]);
       }
       context.stroke();
-    }
-
-    for (let i = 0; i < placed.length; i++) {
-      const point = placed[i];
-      const keep = keepAlpha(point.x, point.y, regions);
-      if (keep < 0.05) continue;
-      const beat = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(now * 0.0011 + nodes[i].p));
-      context.fillStyle = "rgba(255, 255, 255, " + (0.16 * beat * keep).toFixed(3) + ")";
-      context.beginPath();
-      context.arc(point.x, point.y, 1.15 + beat * 0.7, 0, Math.PI * 2);
-      context.fill();
     }
 
     const wantStrength =
@@ -298,8 +280,8 @@
   function start() {
     window.cancelAnimationFrame(state.raf);
     state.raf = 0;
-    if (reduceMotion || document.hidden) {
-      draw(reduceMotion ? 0 : performance.now());
+    if (document.hidden) {
+      draw(performance.now());
       return;
     }
     state.raf = window.requestAnimationFrame(frame);
@@ -334,12 +316,6 @@
   });
 
   document.addEventListener("visibilitychange", start);
-  if (reduceQuery.addEventListener) {
-    reduceQuery.addEventListener("change", function (event) {
-      reduceMotion = event.matches;
-      start();
-    });
-  }
   window.addEventListener("resize", resize);
 
   if (typeof ResizeObserver === "function") {
