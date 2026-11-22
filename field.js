@@ -231,11 +231,11 @@
 
             const inward = Math.sin(proximity * Math.PI * 0.92 - now * 0.00048 + phase * 0.2);
             const pulseLift = 0.55 + 0.45 * ((inward + 1) * 0.5) * (0.65 + 0.35 * pulse);
-            const base = 0.16 + 0.26 * Math.pow(Math.max(0, 1 - dist), 1.15);
+            const base = 0.34 + 0.46 * Math.pow(Math.max(0, 1 - dist), 1.15);
             const alpha = base * along * keep * pulseLift + mag.glow * keep;
-            const capped = Math.min(alpha, 0.44);
-            if (capped > 0.03) {
-              const index = Math.min(bucketCount - 1, Math.floor((capped / 0.44) * bucketCount));
+            const capped = Math.min(alpha, 0.86);
+            if (capped > 0.05) {
+              const index = Math.min(bucketCount - 1, Math.floor((capped / 0.86) * bucketCount));
               buckets[index].push(prevX, prevDrawY, x, drawY);
             }
           }
@@ -251,8 +251,8 @@
     for (let b = 0; b < bucketCount; b++) {
       const bucket = buckets[b];
       if (!bucket.length) continue;
-      const alpha = ((b + 0.5) / bucketCount) * 0.44;
-      context.strokeStyle = "rgba(214, 217, 223, " + alpha.toFixed(3) + ")";
+      const alpha = ((b + 0.5) / bucketCount) * 0.86;
+      context.strokeStyle = "rgba(255, 255, 255, " + alpha.toFixed(3) + ")";
       context.beginPath();
       for (let p = 0; p < bucket.length; p += 4) {
         context.moveTo(bucket[p], bucket[p + 1]);
