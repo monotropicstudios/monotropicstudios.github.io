@@ -134,7 +134,7 @@
   document.querySelector("main").addEventListener("mousedown", function (event) {
     if (!open || form.hidden) return;
     const t = event.target;
-    if (t === detailsEl || t.closest(".submit") || t.closest(".close")) return;
+    if (t === detailsEl || t.closest(".submit") || t.closest(".close") || t.closest(".works")) return;
     event.preventDefault();
     detailsEl.focus({ preventScroll: true });
   });
@@ -157,6 +157,7 @@
         return;
       }
       const target = event.target;
+      if (target && target.closest && target.closest(".works")) return;
       if (target && detailsEl.contains(target)) {
         const canScroll = detailsEl.scrollHeight > detailsEl.clientHeight + 1;
         if (canScroll) {

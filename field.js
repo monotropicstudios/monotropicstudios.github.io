@@ -74,7 +74,7 @@
     }
     const panel = document.getElementById("panel");
     if (panel && panel.classList.contains("is-open")) {
-      const rect = elementRect(panel);
+      const rect = elementRect(panel.querySelector(".panel-clip")) || elementRect(panel);
       if (rect) list.push(rect);
     }
     const status = document.getElementById("status");
