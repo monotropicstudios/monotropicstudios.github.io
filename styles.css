@@ -68,10 +68,8 @@ body {
 
 #field {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100vh;
-  height: 100lvh;
+  left: 0;
+  top: 0;
   display: block;
   pointer-events: none;
   z-index: 0;
@@ -694,26 +692,53 @@ body[data-view="inquiry"] .works {
   flex: 0 0 auto;
 }
 
+body[data-view="inquiry"] .work-list {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(0.85rem, 4vw, 2.75rem);
+  width: 100%;
+}
+
+body[data-view="inquiry"] .work-list li {
+  width: auto;
+}
+
 body[data-view="inquiry"] #form {
-  width: min(20rem, calc(100% - 2.5rem));
-  margin-top: 1.6rem;
+  width: min(480px, calc(100% - 2rem));
+  margin-top: 1.35rem;
+  background: transparent;
 }
 
 body[data-view="inquiry"] .field {
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.45rem;
 }
 
 body[data-view="inquiry"] #zone {
   min-height: 0;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.45rem;
 }
 
 body[data-view="inquiry"] .field textarea,
 body[data-view="inquiry"] .field textarea:focus {
-  min-height: 6.5rem;
+  width: 100%;
+  height: 140px;
+  min-height: 140px;
+  max-height: 140px;
   padding: 0.7rem 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: transparent;
+  resize: none;
+}
+
+@media (max-width: 520px) {
+  body[data-view="inquiry"] .field textarea,
+  body[data-view="inquiry"] .field textarea:focus {
+    height: 120px;
+    min-height: 120px;
+    max-height: 120px;
+  }
 }
 
 .honey {

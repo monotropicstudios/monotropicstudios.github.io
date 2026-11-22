@@ -33,9 +33,11 @@
   }
 
   function resize() {
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
     if (w < 2 || h < 2) return;
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const bitmapW = Math.round(w * dpr);
     const bitmapH = Math.round(h * dpr);
@@ -65,24 +67,7 @@
   }
 
   function masks() {
-    const list = [];
-    if (headingVisible()) {
-      const word = elementRect(document.querySelector(".word"));
-      const line = elementRect(document.querySelector(".line"));
-      const identity = unionRect(word, line);
-      if (identity) list.push(identity);
-    }
-    const panel = document.getElementById("panel");
-    if (panel && panel.classList.contains("is-open")) {
-      const rect = elementRect(panel.querySelector(".panel-clip")) || elementRect(panel);
-      if (rect) list.push(rect);
-    }
-    const status = document.getElementById("status");
-    if (status && !status.hidden) {
-      const rect = elementRect(status);
-      if (rect) list.push(rect);
-    }
-    return list;
+    return [];
   }
 
   function unionRect(a, b) {
