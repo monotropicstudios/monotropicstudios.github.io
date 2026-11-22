@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Redirecting</title>
+    <script>
+      (function () {
+        var path = location.pathname;
+        var dest = "";
+        if (/^\/witness-me\/witness-me\.pdf$/.test(path)) dest = "/witness-me/";
+        else if (/^\/witness-me\/audio\/witness-me-audiobook\.m4b$/.test(path)) dest = "/witness-me/";
+        else if (/^\/witness-me\/audio\/(?:0[2-9]|1[0-4])\.mp3$/.test(path)) dest = "/witness-me/";
+        else if (/^\/friends-get-away\/friends-get-away\.pdf$/.test(path)) dest = "/friends-get-away/";
+        else if (/^\/friends-get-away\/audio\/friends-get-away-audiobook\.m4b$/.test(path)) dest = "/friends-get-away/";
+        else if (/^\/friends-get-away\/audio\/(?:0[2-9]|1[0-5])\.mp3$/.test(path)) dest = "/friends-get-away/";
+        if (!dest) return;
+        var go = document.getElementById("go");
+        if (go) go.setAttribute("href", dest);
+        location.replace(dest);
+      })();
+    </script>
+  </head>
+  <body>
+    <p><a id="go" href="/">Home</a></p>
+  </body>
+</html>

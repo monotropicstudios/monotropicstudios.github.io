@@ -29,11 +29,11 @@
     document.getElementById("message").textContent = "";
     var p = audio.play();
     if (p) p.catch(function (e) {
-      if (e.name !== "AbortError") document.getElementById("message").textContent = "Tap Play to try again, or download the audiobook below.";
+      if (e.name !== "AbortError") document.getElementById("message").textContent = "Tap Play to try again.";
     });
   }
   audio.addEventListener("error", function () {
-    document.getElementById("message").textContent = "Couldn't load this chapter. Check your connection or download the audiobook below.";
+    document.getElementById("message").textContent = "Couldn't load this chapter. Check your connection.";
   });
   function save(force) {
     var t = Date.now();
