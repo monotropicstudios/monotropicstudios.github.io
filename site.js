@@ -9,6 +9,13 @@
 
   const heading = openButton.closest("h1");
   let open = false;
+
+  function concealHeading(hidden) {
+    if (!heading) return;
+    heading.inert = hidden;
+    if (hidden) heading.setAttribute("aria-hidden", "true");
+    else heading.removeAttribute("aria-hidden");
+  }
   let sending = false;
 
   // Keep the layout fixed when the mobile keyboard opens.
@@ -70,8 +77,7 @@
     openButton.setAttribute("aria-expanded", next ? "true" : "false");
     if (next) {
       document.body.dataset.view = "inquiry";
-      heading.inert = true;
-      heading.setAttribute("aria-hidden", "true");
+      concealHeading(true);
       panel.classList.add("is-open");
       panel.setAttribute("aria-hidden", "false");
       panel.inert = false;
@@ -83,8 +89,7 @@
     }
 
     delete document.body.dataset.view;
-    heading.inert = false;
-    heading.removeAttribute("aria-hidden");
+    concealHeading(false);
     panel.classList.remove("is-open");
     panel.setAttribute("aria-hidden", "true");
     panel.inert = true;
@@ -152,6 +157,7 @@
   document.addEventListener(
     "touchmove",
     function (event) {
+      if (document.body.classList.contains("book") && !open) return;
       if (!event.touches || !event.touches.length) {
         event.preventDefault();
         return;
@@ -267,12 +273,15 @@
       return;
     }
 
+    const subjectField = form.querySelector("[name='_subject']");
+    const bookField = form.querySelector("[name='book']");
     const payload = {
       details: detailsEl.value,
-      _subject: "Monotropic inquiry",
+      _subject: subjectField && subjectField.value ? subjectField.value : "Monotropic inquiry",
       _captcha: "false",
       _template: "box",
     };
+    if (bookField && bookField.value) payload.book = bookField.value;
 
     sending = true;
     submitButton.disabled = true;

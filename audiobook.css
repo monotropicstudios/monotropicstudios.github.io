@@ -48,7 +48,7 @@ body.category main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: safe center;
   width: min(100%, 40rem);
 }
 body.category h1 {
@@ -88,6 +88,306 @@ body.category .tiles a:focus {
 body.category .tiles a:focus-visible {
   outline: 1px solid rgba(255, 255, 255, 0.72);
   outline-offset: 3px;
+}
+body.category ul.tiles.tiles-rich {
+  width: min(100%, 36rem);
+  gap: 0.85rem;
+}
+body.category ul.tiles.tiles-rich a {
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.95rem;
+  padding: 0.7rem 0.85rem;
+  letter-spacing: 0;
+  text-align: left;
+}
+body.category ul.tiles.tiles-rich img {
+  width: 4.4rem;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  flex: 0 0 auto;
+  background: #111;
+}
+body.category ul.tiles.tiles-rich .tile-title {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+body.category ul.tiles.tiles-rich .tile-copy {
+  display: block;
+  margin-top: 0.35rem;
+  color: #9c9c96;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+body.category ul.tiles.tiles-rich a:hover .tile-copy,
+body.category ul.tiles.tiles-rich a:focus-visible .tile-copy {
+  color: #e7e5e0;
+}
+body.category ul.tiles.tiles-rich a.plain {
+  justify-content: center;
+  text-align: center;
+  padding: 1.15rem 1.25rem;
+}
+body.category ul.tiles.tiles-rich a.plain .tile-copy {
+  max-width: 28rem;
+}
+body.book main {
+  position: relative;
+  z-index: 1;
+}
+body.book .blurb {
+  margin: 1.15rem auto 0;
+  max-width: 34rem;
+  text-align: center;
+  color: #c8c6c0;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+body.book .preview {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 2rem;
+}
+body.book .preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: #111;
+}
+body.book .offer {
+  margin-top: 2.25rem;
+}
+body.book .license {
+  margin: 0;
+  padding: 1rem 1.05rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  text-align: center;
+  color: #e7e5e0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+body.book .inquire {
+  display: block;
+  width: 100%;
+  margin: 0.85rem auto 0;
+  padding: 0.55rem 0.4rem;
+  border: 0;
+  background: none;
+  color: #e7e5e0;
+  font: inherit;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+  text-align: center;
+  cursor: pointer;
+}
+body.book .inquire:hover,
+body.book .inquire:focus-visible {
+  color: #fff;
+}
+body.book .panel {
+  display: none;
+}
+body.book .panel.is-open {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  pointer-events: auto;
+}
+body.book .panel-clip,
+body.book .panel-inner {
+  display: flex;
+  width: min(100%, 40rem);
+  height: 100%;
+  min-height: 0;
+}
+body.book .panel-inner {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: max(1.25rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) max(1.25rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
+}
+body.book .works {
+  width: 100%;
+}
+body.book .work-list {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(0.85rem, 4vw, 2.75rem);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body.book .work-list a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.15rem 0.2rem;
+  color: #c8c6c0;
+  text-decoration: none;
+  letter-spacing: 0.06em;
+}
+body.book .work-list a:hover,
+body.book .work-list a:focus-visible {
+  color: #fff;
+}
+body.book #form {
+  width: min(480px, calc(100% - 2rem));
+  margin: 1.35rem 0 0;
+  background: transparent;
+}
+body.book .field {
+  margin: 0 0 0.45rem;
+}
+body.book .field label {
+  display: block;
+  margin-bottom: 0.45rem;
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  color: #9c9c96;
+}
+body.book .field textarea,
+body.book .field textarea:focus {
+  display: block;
+  width: 100%;
+  height: 140px;
+  min-height: 140px;
+  max-height: 140px;
+  margin: 0;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0;
+  background: transparent;
+  color: #e7e5e0;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.45;
+  resize: none;
+  outline: none;
+}
+body.book .submit {
+  display: block;
+  width: 100%;
+  margin: 0.45rem 0 0;
+  padding: 0.35rem 0;
+  border: 0;
+  background: none;
+  color: #e7e5e0;
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-align: center;
+  cursor: pointer;
+}
+body.book .submit:hover,
+body.book .submit:focus-visible {
+  color: #fff;
+}
+body.book .submit:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+body.book .honey {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+body.book .close {
+  position: fixed;
+  z-index: 6;
+  top: max(0.65rem, env(safe-area-inset-top));
+  right: max(0.65rem, env(safe-area-inset-right));
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #9c9c96;
+  cursor: pointer;
+}
+body.book .close[hidden] {
+  display: none !important;
+}
+body.book .close svg {
+  display: block;
+  stroke: currentColor;
+  stroke-width: 1;
+  fill: none;
+}
+body.book .close:hover,
+body.book .close:focus-visible {
+  color: #e7e5e0;
+}
+body.book #form.is-departing textarea,
+body.book #form.is-departing label {
+  opacity: 0;
+}
+body.book.is-sent #form {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+body.book.is-sent .panel-inner {
+  justify-content: center;
+}
+body.book .depart {
+  position: fixed;
+  z-index: 30;
+  box-sizing: border-box;
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+  color: #e7e5e0;
+  text-align: center;
+  transform-origin: center center;
+  pointer-events: none;
+  white-space: pre-wrap;
+}
+body.book[data-view="inquiry"] {
+  overflow: hidden;
+}
+body.book[data-view="inquiry"] main > :not(.panel):not(.close) {
+  visibility: hidden;
+}
+@media (max-width: 520px) {
+  body.book .field textarea,
+  body.book .field textarea:focus {
+    height: 120px;
+    min-height: 120px;
+    max-height: 120px;
+  }
 }
 main {
   width: min(100%, 30rem);
