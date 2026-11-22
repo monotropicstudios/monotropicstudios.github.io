@@ -685,7 +685,9 @@ body[data-view="inquiry"] .field textarea {
 
 /* Inquiry form: bordered fields, custom button, visible errors. */
 body[data-view="inquiry"] .panel-inner {
-  justify-content: safe center;
+  justify-content: center;
+  align-items: center;
+  padding: max(1.25rem, env(safe-area-inset-top), env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-right), env(safe-area-inset-left));
 }
 
 body[data-view="inquiry"] .works {
@@ -862,7 +864,40 @@ body[data-view="inquiry"] .submit:disabled {
     color: CanvasText;
   }
 
-  body[data-view="inquiry"] .submit:disabled {
-    color: GrayText;
-  }
+body[data-view="inquiry"] .submit:disabled {
+  color: GrayText;
+}
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body[data-view="inquiry"] .field textarea::placeholder {
+  color: #9c9c96;
+  opacity: 1;
+}
+
+#form.is-departing .field textarea {
+  opacity: 0;
+}
+
+.depart {
+  position: fixed;
+  z-index: 30;
+  box-sizing: border-box;
+  margin: 0;
+  overflow: hidden;
+  transform-origin: center center;
+  pointer-events: none;
+  white-space: pre-wrap;
+  word-break: break-word;
 }

@@ -23,7 +23,7 @@
     <meta name="twitter:image" content="https://monotropicstudios.com/monoqube/og-v2.png" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="geist-latin-300.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -172,21 +172,10 @@
           <input type="hidden" name="_subject" value="MonoQube licensing" />
           <input type="hidden" name="_captcha" value="false" />
           <input type="hidden" name="_template" value="box" />
-          <input type="hidden" name="_next" value="https://monotropicstudios.com/inquiry/received/" />
           <p class="honey" aria-hidden="true"><label for="company">Company</label><input id="company" type="text" name="_honey" tabindex="-1" autocomplete="off" /></p>
           <div class="field">
-            <label for="name">Name</label>
-            <input id="name" name="name" type="text" autocomplete="name" maxlength="80" required aria-describedby="name-error" />
-            <p class="error" id="name-error" hidden></p>
-          </div>
-          <div class="field">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="120" required aria-describedby="email-error" />
-            <p class="error" id="email-error" hidden></p>
-          </div>
-          <div class="field">
-            <label for="details">Inquiry</label>
-            <textarea id="details" name="details" rows="5" maxlength="2000" required aria-describedby="details-error"></textarea>
+            <label class="sr" for="details">Inquiry</label>
+            <textarea id="details" name="details" rows="6" maxlength="2000" required aria-describedby="details-error" placeholder="Your message, and how to reach you"></textarea>
             <p class="error" id="details-error" hidden></p>
           </div>
           <button class="submit" id="submit" type="submit">Send inquiry</button>
@@ -195,6 +184,6 @@
       </section>
     </main>
     <script src="cube.js"></script>
-    <script src="site.js?v=2"></script>
+    <script src="site.js?v=3"></script>
   </body>
 </html>
