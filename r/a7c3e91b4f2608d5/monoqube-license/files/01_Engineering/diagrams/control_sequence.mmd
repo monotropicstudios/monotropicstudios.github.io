@@ -1,0 +1,24 @@
+sequenceDiagram
+  participant Bay as Bay (presence + tag bus)
+  participant Tag as Bay tag (ATECC608B)
+  participant C as Runtime controller
+  participant SE as Secure element
+  participant K as Contactor
+  participant M as Metering AFE
+  Bay->>C: presence detect (insertion event)
+  C->>Tag: challenge nonce (32 bytes)
+  Tag-->>C: signature over nonce + tag cert
+  C->>C: verify tag cert chain + AR match + envelope + window
+  C->>SE: append AUTHZ record, update head
+  alt authorized and interlocks OK
+    C->>K: close (both relays)
+    C->>SE: append GATE closed
+    loop every metering window (default 1 s)
+      M-->>C: Vrms, Irms, P, E per phase
+      C->>SE: append METER, check envelope
+    end
+    C->>SE: CHECKPOINT (signed) every window or K records
+  else not authorized
+    C->>SE: append GATE withheld (claims 6, 27)
+  end
+  Note over C,K: Envelope breach, AR expiry, tag mismatch on re-check, door open, or watchdog trip opens the gate and logs ENVELOPE_CUTOFF / TAMPER

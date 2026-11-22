@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <title>Licensing | MonoQube licensing | Monotropic Studios</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../room.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <a class="mark" href="../">MONOQUBE</a>
+    <p class="kicker">Licensing data room</p>
+    <a class="package" href="../monoqube-license-package.zip">Download full package</a>
+  </header>
+  <div class="layout">
+    <nav aria-label="Sections">
+      <a href="../">Overview</a>
+<a href="../engineering/">Engineering</a>
+<a href="../bom/">Bill of materials</a>
+<a href="../specification/">Specification</a>
+<a href="../licensing/" aria-current="page">Licensing</a>
+<a href="../questions/">Questions</a>
+<a href="../pilot/">Pilot</a>
+<a href="../measurements/">Measurements</a>
+    </nav>
+    <main id="content">
+      <article id="01_License_Models_and_Rates"><h1>License Models and Rates</h1>
+<p>All rates are PROPOSALS for negotiation. Benchmarks are CITED. Nothing here is a legal opinion.</p>
+<h2>1. Comparables</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Comparable</th>
+<th>Rate</th>
+<th>What it covers</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Arm Armv9</td>
+<td>about 5% of chip ASP</td>
+<td>Processor architecture royalty</td>
+<td>Arm fiscal Q1 2026 call, via <a href="https://www.eetimes.com/armv9-and-css-royalties-drive-growth-in-1bn-arm-q1-earnings/">EE Times</a></td>
+</tr>
+<tr>
+<td>Arm Compute Subsystems</td>
+<td>about 10% of chip ASP</td>
+<td>Pre-integrated subsystem, closer to a reference design</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Arm v8</td>
+<td>about 2.5% to 3.5%</td>
+<td>Older architecture</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Qualcomm 5G handset</td>
+<td>3.25% of device price, royalty base capped at $400 (max about $13 per device)</td>
+<td>Essential cellular patents, single-mode 5G</td>
+<td>Qualcomm 5G NR licensing statement</td>
+</tr>
+<tr>
+<td>Avanci 5G Vehicle</td>
+<td>$32 per vehicle ($29 early rate)</td>
+<td>Pool of cellular SEPs for connected cars</td>
+<td>Avanci 5G Vehicle program</td>
+</tr>
+<tr>
+<td>AWS Bedrock AgentCore</td>
+<td>$0.0895 per vCPU-hour</td>
+<td>Usage price of a metered agent runtime (shows per-hour metering is accepted by buyers)</td>
+<td>AWS AgentCore pricing page</td>
+</tr>
+<tr>
+<td>GPU rental index, 21 Nov 2026</td>
+<td>H100 $3.37/hr, B200 $8.50/hr</td>
+<td>What a metered GPU-hour is worth</td>
+<td>gpurentalprices.com</td>
+</tr>
+</tbody>
+</table></div>
+<p>What the comparables say: hardware IP royalties cluster at 3% to 5% of the device price for architecture-level IP and about 10% when the licensor supplies a working subsystem. Per-unit flat fees (Avanci) work when the device price varies widely. MonoQube supplies a working reference design, firmware, protocol, and conformance program, which sits between Arm architecture and Arm CSS.</p>
+<h2>2. Model options</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Structure</th>
+<th>Proposed rate</th>
+<th>Best for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A. Per-unit royalty (OEM)</td>
+<td>% of net selling price of each licensed product (module, PDU, rack, pod)</td>
+<td>6% (units 1 to 100), 5% (101 to 1,000), 4% (above 1,000); floor $40 per unit; royalty base for a rack or pod is the metering and power-control subassembly, capped at $1,500 per rack (keeps it fair on a $3M rack)</td>
+<td>PDU, busway, rack, pod, and server OEMs</td>
+</tr>
+<tr>
+<td>B. Per-device-hour (operator)</td>
+<td>Fee per authorized device-hour recorded in the ledger</td>
+<td>$0.002 per GPU-hour (0.02% of a B200 rental hour at $8.50)</td>
+<td>Neoclouds, colos, lessors running retrofit modules</td>
+</tr>
+<tr>
+<td>C. Recurring service share</td>
+<td>Share of the licensee's MonoQube-based subscription revenue (witness, vault, reports)</td>
+<td>20%</td>
+<td>OEMs that resell the service</td>
+</tr>
+<tr>
+<td>D. Field-of-use</td>
+<td>Exclusive or non-exclusive rights limited to a field, for example "GPU-collateral finance in North America" or "defense tactical edge"</td>
+<td>Upfront fee + royalty A or B; exclusivity premium below</td>
+<td>Strategic licensees</td>
+</tr>
+<tr>
+<td>E. Exclusive (field or territory)</td>
+<td>Exclusive in a defined field, with minimum annual royalties and diligence milestones</td>
+<td>Upfront $500k to $2M (PROPOSED, depends on field) + minimums starting at $250k/yr, stepping up</td>
+<td>One anchor partner per field</td>
+</tr>
+<tr>
+<td>F. Non-exclusive standard</td>
+<td>Click-through style standard terms, same rate for all</td>
+<td>Model A or B, no upfront above $25k</td>
+<td>The ripple: many OEMs, fast</td>
+</tr>
+<tr>
+<td>G. Acquisition</td>
+<td>A purchase of the application family is not offered in this data room. Any terms would be set with counsel.</td>
+<td>Not offered here</td>
+<td>Strategic acquirer</td>
+</tr>
+</tbody>
+</table></div>
+<h2>3. Recommended structure</h2>
+<ol>
+<li><strong>Non-exclusive standard license (F)</strong> with Model A for OEMs and Model B for operators. Same price for everyone in a tier so the first signers are not undercut. Most-favored-licensee clause for the first 10 licensees.</li>
+<li><strong>One exclusive field-of-use (E)</strong> reserved for the first lender or lessor partner who mandates MonoQube in a facility, limited to "collateral attestation services for GPU-backed credit" for 24 months. This is a distribution deal, not a technology lockout. OEMs still sell hardware to everyone.</li>
+<li><strong>Pilot conversion credit:</strong> pilot fees credit 100% against the first year of royalties.</li>
+</ol>
+<h2>4. Royalty math examples</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Calculation</th>
+<th>Royalty</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OEM ships 1,000 MQ-MAC-OEM boards inside PDUs, PDU metering subassembly priced at $800</td>
+<td>5% x $800 = $40 (floor)</td>
+<td>$40,000</td>
+</tr>
+<tr>
+<td>OEM ships 1,000 MQ-MM-30 at $2,600</td>
+<td>5% x $2,600</td>
+<td>$130,000</td>
+</tr>
+<tr>
+<td>Operator: 2,000 GPUs, 90% powered</td>
+<td>2,000 x 8,760 x 0.9 x $0.002</td>
+<td>$31,536 per year</td>
+</tr>
+<tr>
+<td>Operator: 30,000 GPUs, 90% powered</td>
+<td>30,000 x 8,760 x 0.9 x $0.002</td>
+<td>$473,040 per year</td>
+</tr>
+</tbody>
+</table></div></article>
+<article id="02_Draft_Term_Sheet"><h1>Draft Term Sheet: MonoQube Patent and Technology License</h1>
+<p><strong>DRAFT FOR DISCUSSION. NOT AN OFFER. NON-BINDING except Confidentiality and Governing Law. Requires counsel review before use.</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Draft</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Licensor</td>
+<td>Monotropic Studios LLC</td>
+</tr>
+<tr>
+<td>Licensee</td>
+<td>[Name]</td>
+</tr>
+<tr>
+<td>Licensed IP</td>
+<td>PCT/US26/39996 and US provisionals 63/857,478 and 63/906,799; all national-phase, continuation, and divisional filings claiming priority to them; MQ-ATTEST protocol specification; MQ-MAC reference design files; firmware source (see Technology below); know-how</td>
+</tr>
+<tr>
+<td>Technology</td>
+<td>Reference design (schematics, layout, BOM), firmware source under a source license, verifier SDKs, test vectors, conformance test suite</td>
+</tr>
+<tr>
+<td>Grant</td>
+<td>[Non-exclusive / Exclusive in Field], worldwide [or Territory], to make, have made, use, sell, offer, import Licensed Products</td>
+</tr>
+<tr>
+<td>Field (if exclusive)</td>
+<td>[e.g. collateral attestation for GPU-backed credit facilities]</td>
+</tr>
+<tr>
+<td>Licensed Products</td>
+<td>Devices or systems that meter, gate, and record power to a compute bay by device identifier as described in the Licensed IP</td>
+</tr>
+<tr>
+<td>Upfront fee</td>
+<td>[$X], credited against first-year royalties if pilot converted</td>
+</tr>
+<tr>
+<td>Running royalty</td>
+<td>Model A: 6% / 5% / 4% of Net Sales by annual unit tier; floor $40/unit; rack or pod base capped at $1,500/rack. Model B: $0.002 per authorized device-hour</td>
+</tr>
+<tr>
+<td>Service share</td>
+<td>20% of Licensee's revenue from MonoQube-based recurring services</td>
+</tr>
+<tr>
+<td>Minimum annual royalty</td>
+<td>Exclusive only: [$250k year 1, $500k year 2, $1M year 3]</td>
+</tr>
+<tr>
+<td>Most-favored licensee</td>
+<td>First 10 non-exclusive licensees in a tier</td>
+</tr>
+<tr>
+<td>Reporting</td>
+<td>Quarterly; royalty report generated from the device ledgers (the product meters its own royalty base)</td>
+</tr>
+<tr>
+<td>Audit</td>
+<td>Once per year, 30 days notice, licensor pays unless underpayment above 5%</td>
+</tr>
+<tr>
+<td>Conformance</td>
+<td>Products must pass the MonoQube conformance suite to use the mark "MonoQube Verified"</td>
+</tr>
+<tr>
+<td>Trust root</td>
+<td>Licensor or a designated CA operates the device certificate root; Licensee may run an intermediate CA under the policy</td>
+</tr>
+<tr>
+<td>Improvements</td>
+<td>Licensee owns its improvements; grants back a non-exclusive license to protocol-level improvements for interoperability</td>
+</tr>
+<tr>
+<td>Prosecution</td>
+<td>Licensor controls prosecution and pays costs; exclusive licensee may share costs in exchange for input</td>
+</tr>
+<tr>
+<td>Enforcement</td>
+<td>Licensor first right; exclusive licensee second right in Field</td>
+</tr>
+<tr>
+<td>Warranties</td>
+<td>Licensor has the right to grant; no warranty of validity, scope, or non-infringement; application is pending</td>
+</tr>
+<tr>
+<td>Indemnity</td>
+<td>Mutual, capped at fees paid in prior 12 months</td>
+</tr>
+<tr>
+<td>Term</td>
+<td>Life of the last-to-expire licensed patent; technology license 10 years renewable</td>
+</tr>
+<tr>
+<td>Termination</td>
+<td>Material breach uncured in 60 days; insolvency</td>
+</tr>
+<tr>
+<td>Change of control</td>
+<td>Assignable with consent, not unreasonably withheld</td>
+</tr>
+<tr>
+<td>Export</td>
+<td>Each party complies with EAR; licensee responsible for its own classifications</td>
+</tr>
+<tr>
+<td>Governing law</td>
+<td>[Delaware or Virginia]</td>
+</tr>
+<tr>
+<td>Confidentiality</td>
+<td>Binding upon signing</td>
+</tr>
+<tr>
+<td>Open items for counsel</td>
+<td>IP assignment of record; co-founder contributions; SBIR and government-rights review; prior OEM NDA joint-development terms; remote-disablement terms (see FAQ)</td>
+</tr>
+</tbody>
+</table></div></article>
+<article id="03_IP_Status_and_Claim_Coverage"><h1>IP Status and Claim Coverage</h1>
+<p>Not legal advice.</p>
+<h2>1. Status</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Fact</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application</td>
+<td>PCT/US26/39996, "Modular Compute Pod with Verifiable Runtime Metering"</td>
+<td>PCT filing receipt</td>
+</tr>
+<tr>
+<td>Filed</td>
+<td>5 August 2026, USPTO as Receiving Office</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Applicant / inventor</td>
+<td>Monotropic Studios LLC / Timothy Daniel Eisel</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Priority</td>
+<td>US provisionals 63/857,478 (5 Aug 2025) and 63/906,799 (28 Oct 2025)</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Docket</td>
+<td>MTROP.P2001WO/00677051</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Claims</td>
+<td>29 claims; independents are 1 (pod) and 25 (method)</td>
+<td>Application text</td>
+</tr>
+<tr>
+<td>Published</td>
+<td>No. Expected about 5 February 2027 (18 months from earliest priority)</td>
+<td>Calculated</td>
+</tr>
+<tr>
+<td>National phase deadline</td>
+<td>About 5 February 2028 (30 months)</td>
+<td>Calculated</td>
+</tr>
+<tr>
+<td>Granted claims</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr>
+<td>Note</td>
+<td>"US26039996" is shorthand for the PCT number, not a US patent number</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2>2. Claim coverage in plain words</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Claim group</th>
+<th>Plain words</th>
+<th>Who it reaches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claim 1 (independent)</td>
+<td>A compute pod with a bay that holds a computing device, a power assembly that switches and measures power to it, and a controller that reads the device's identifier, decides whether it is authorized, and only then turns power on</td>
+<td>Anyone selling a rack, PDU, or pod that gates power by device identity</td>
+</tr>
+<tr>
+<td>Claim 25 (independent)</td>
+<td>The same steps as a method</td>
+<td>Operators running that process</td>
+</tr>
+<tr>
+<td>Claims 5, 8, 9, 13, 26, 28</td>
+<td>The controller does this without depending on data from the hosted device (payload independent)</td>
+<td>The core differentiator; prevents "the server reports its own usage"</td>
+</tr>
+<tr>
+<td>Claims 7 to 12, 29</td>
+<td>It keeps an operating record of authorization and power</td>
+<td>The audit trail product</td>
+</tr>
+<tr>
+<td>Claims 10, 11, 21</td>
+<td>Authorization for a duration, with stop when time runs out</td>
+<td>Leasing, metered hours, collateral</td>
+</tr>
+<tr>
+<td>Claim 20</td>
+<td>Identifier from RFID, EEPROM, a token, or a cryptographic credential</td>
+<td>Covers common identity methods</td>
+</tr>
+<tr>
+<td>Claim 23</td>
+<td>Exchangeable devices in the bay</td>
+<td>Swap-in hardware fleets</td>
+</tr>
+</tbody>
+</table></div>
+<h2>3. What the claims do not cover (be candid in diligence)</h2>
+<ol>
+<li>A signed or third-party-verifiable record is not in any claim. "Verifiable" is in the title only. Spec paragraphs [0039] and [0077] describe a cryptographically verifiable summary sent to an external system, so a continuation or amendment can add it before national phase.</li>
+<li>Pure software agent metering with no bay and no power control is outside claim 1.</li>
+<li>Spec [0021] says power data alone does not prove which algorithm ran. MonoQube proves which device was powered, when, how much, and under what authorization. It does not prove what code ran.</li>
+<li>Scope can change in the international search report, written opinion, and national phase examination.</li>
+</ol>
+<h2>4. Recommended IP actions</h2>
+<ol>
+<li>Confirm the assignment from inventor to Monotropic Studios LLC is recorded.</li>
+<li>File a continuation-style claim set at national phase covering the signed hash-chained record, external witness, and the two-element gate (spec support at [0039], [0077]).</li>
+<li>Decide national-phase countries by February 2028 (US, EP, JP, KR, CN, TW, IN suggested by where racks and PDUs are made).</li>
+<li>Register "MonoQube" and "MonoQube Verified" as trademarks for the conformance program.</li>
+<li>Keep the protocol spec copyrighted and the conformance suite as licensed know-how; this gives licensees a reason to pay even before grant.</li>
+</ol></article>
+      <p class="contact">Monotropic Studios. Contact <a href="mailto:info@monotropicstudios.com">info@monotropicstudios.com</a>. Not an offer. Not legal advice.</p>
+    </main>
+  </div>
+</body>
+</html>

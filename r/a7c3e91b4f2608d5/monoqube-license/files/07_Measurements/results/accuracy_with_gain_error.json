@@ -1,0 +1,14 @@
+{
+  "sessions": 100,
+  "session_s": 60,
+  "sample_hz": 1000,
+  "modeled_sensor_noise_pct_of_reading": 0.5,
+  "modeled_gain_error_sd_pct": 0.2,
+  "adc_bits": 16,
+  "energy_abs_error_pct": {
+    "mean": 0.1741,
+    "p95": 0.5173,
+    "max": 0.6155
+  },
+  "duration_abs_error_s_max": 0.0
+}

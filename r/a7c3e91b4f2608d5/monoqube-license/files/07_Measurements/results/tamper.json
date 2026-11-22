@@ -1,0 +1,67 @@
+{
+  "value_edit_naive": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "value_edit_rechained": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "value_edit_rechained_resigned_wrong_key": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "delete_record_naive": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "delete_record_rechained": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "insert_forged_record_rechained": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "reorder_records_rechained": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "replay_duplicate_naive": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "backdate_timestamp_rechained": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "forged_signature_wrong_key": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "truncate_to_earlier_checkpoint_no_external_copy": {
+    "trials": 1000,
+    "detected": 0,
+    "rate_pct": 0.0
+  },
+  "truncate_to_earlier_checkpoint_with_external_last_checkpoint": {
+    "trials": 1000,
+    "detected": 1000,
+    "rate_pct": 100.0
+  },
+  "_note": "Attacker model: full write access to the stored record, can recompute SHA-256 chain, does not hold the pod signing key. Truncation without an external copy of the last checkpoint is undetectable by design and is listed to show the limit.",
+  "clean_ledgers_false_positive": {
+    "trials": 200,
+    "flagged": 0
+  }
+}

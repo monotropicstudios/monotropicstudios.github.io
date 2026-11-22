@@ -1,0 +1,43 @@
+{
+  "payload": "SHA-256 + SHA3-256 over a 32 MB buffer per iteration",
+  "samples_per_condition": 78,
+  "baseline_median_ms": 77.16,
+  "meter_other_core": {
+    "median_ms": 78.09,
+    "latency_overhead_pct": 1.21
+  },
+  "meter_same_core": {
+    "median_ms": 80.7,
+    "latency_overhead_pct": 4.59
+  },
+  "meter_cpu_pct_of_one_core": {
+    "other_core": 6.01,
+    "same_core": 2.51
+  },
+  "meter_ledgers_verified": true,
+  "sample_hz": 1000,
+  "signed_checkpoint_hz": 1,
+  "exposure": {
+    "ledger_bytes_scanned": 1362,
+    "canary_hex_hits": 0,
+    "canary_prefix16_hits": 0,
+    "record_fields": [
+      "bay",
+      "count",
+      "device",
+      "energy_mj",
+      "gate",
+      "hash",
+      "n",
+      "peak_mw",
+      "pod",
+      "prev",
+      "seq",
+      "sig",
+      "state",
+      "t_ns",
+      "type"
+    ],
+    "payload_content_bytes_in_record": 0
+  }
+}

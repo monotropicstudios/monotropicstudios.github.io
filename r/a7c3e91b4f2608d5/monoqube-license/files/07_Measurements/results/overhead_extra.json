@@ -1,0 +1,17 @@
+{
+  "noise_floor_baseline_vs_baseline_pct": 0.35,
+  "samples_each": 78,
+  "long_run": {
+    "payload_iters": 780,
+    "seconds_approx": 62.2,
+    "ledger_records": 126,
+    "ledger_bytes_scanned": 43423,
+    "canary_hex_hits": 0,
+    "canary_prefix16_hits": 0,
+    "meter": {
+      "meter_cpu_pct_of_one_core": 5.84,
+      "records": 126,
+      "verify_ok": true
+    }
+  }
+}

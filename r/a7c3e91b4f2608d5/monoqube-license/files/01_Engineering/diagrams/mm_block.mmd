@@ -1,0 +1,41 @@
+flowchart LR
+  subgraph FEED[Feeder 208V 3-ph]
+    BRK[Upstream breaker]
+  end
+  subgraph MM[MonoQube Meter Module]
+    direction TB
+    CT[3x CT + neutral CT]
+    VD[Voltage dividers]
+    AFE[ADE9000 metering AFE]
+    ISO[ISOW7841 reinforced isolation]
+    MCU[STM32H573 runtime controller\nTrustZone secure partition]
+    SE[SE052F secure element\nFIPS 140-3 L3\nPod Attestation Key]
+    FRAM[F-RAM: counter, ledger head]
+    NOR[NOR flash: append-only ledger]
+    RTC[RTC 1 ppm]
+    WD[External watchdog]
+    TMP[Temp sensors x4]
+    ACC[Accelerometer]
+    DOOR[Door / panel reed sensors]
+    ILK[Hardware interlock chain\nAND of: MCU enable, watchdog OK,\ndoors closed, no fault]
+    K1[Contactor LC1D95BD\npower gate]
+    PHY[Ethernet PHY\ntelemetry network only]
+  end
+  BAY[Compute bay / rack outlets]
+  TAG[Bay identity tag\nATECC608B on device carrier]
+  NET[Telemetry network\nseparate from compute network]
+  BRK --> K1 --> BAY
+  CT --> AFE
+  VD --> AFE
+  AFE --> ISO --> MCU
+  MCU <--> SE
+  MCU <--> FRAM
+  MCU <--> NOR
+  MCU <--> RTC
+  TMP --> MCU
+  ACC --> MCU
+  DOOR --> ILK
+  WD --> ILK
+  MCU --> ILK --> K1
+  TAG -- dedicated bay bus, not the payload --> MCU
+  MCU --> PHY --> NET

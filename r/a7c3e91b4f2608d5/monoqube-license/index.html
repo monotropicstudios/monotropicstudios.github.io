@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <title>Overview | MonoQube licensing | Monotropic Studios</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="room.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <a class="mark" href="./">MONOQUBE</a>
+    <p class="kicker">Licensing data room</p>
+    <a class="package" href="monoqube-license-package.zip">Download full package</a>
+  </header>
+  <div class="layout">
+    <nav aria-label="Sections">
+      <a href="./" aria-current="page">Overview</a>
+<a href="engineering/">Engineering</a>
+<a href="bom/">Bill of materials</a>
+<a href="specification/">Specification</a>
+<a href="licensing/">Licensing</a>
+<a href="questions/">Questions</a>
+<a href="pilot/">Pilot</a>
+<a href="measurements/">Measurements</a>
+    </nav>
+    <main id="content">
+      <h1>MonoQube licensing</h1>
+<p class="lede">A controller in the power path to each compute bay. It reads the device identifier, powers the device only while a valid authorization is in force, meters the energy, and writes a signed, hash-chained operating record that an outside party can verify. It reads nothing from the workload.</p>
+<p class="meta">Prepared 22 November 2026 for licensees. Figures are measured, cited, a design target, or proposed, as marked in each section. Confidential. Not an offer. Not legal advice.</p>
+<h2>Measured on the software reference model</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Metric</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td>Tamper attempts detected</td><td>10,000 / 10,000</td></tr>
+<tr><td>False alarms, clean records</td><td>0 / 200</td></tr>
+<tr><td>Workload data in the record</td><td>0 bytes</td></tr>
+<tr><td>Workload slowdown, meter on its own core</td><td>1.21%</td></tr>
+<tr><td>Sign / verify, median</td><td>31.2 / 85.6 µs</td></tr>
+<tr><td>Energy error, modeled sensor with 0.2% gain error</td><td>0.17% mean, 0.62% max</td></tr>
+</tbody></table></div>
+<p>Hardware accuracy is measured at first build. The reference model is a software stand-in, not the production unit.</p>
+<h2>Unit cost</h2>
+<p>Live distributor prices, 22 November 2026. Proposed prices are proposals.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Units</th><th>Module BOM</th><th>Fully loaded</th><th>Proposed price</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>$1,286</td><td>$6,461</td><td>$6,500</td></tr>
+<tr><td>10</td><td>$1,106</td><td>$2,739</td><td>$4,900</td></tr>
+<tr><td>100</td><td>$898</td><td>$1,158</td><td>$3,400</td></tr>
+<tr><td>1,000</td><td>$854</td><td>$1,092</td><td>$2,600</td></tr>
+<tr><td>10,000</td><td>$840</td><td>$906</td><td>$1,950</td></tr>
+</tbody></table></div>
+<p>Controller only, when the licensee supplies switching: about $226 in parts at 1,000.</p>
+<h2>License and patent</h2>
+<ul>
+<li>Per-unit royalty 6%, then 5%, then 4% of net price by volume, with a $40 floor. Or $0.002 per authorized device-hour, and a 20% share of recurring service.</li>
+<li>Non-exclusive standard terms. One exclusive field is reserved for a lender partner.</li>
+<li>Patent pending: PCT/US26/39996, filed 5 August 2026, claiming priority to 5 August 2025. Not yet published. National phase is about February 2028.</li>
+</ul>
+<h2>Pilot</h2>
+<p>Up to 10 feeders, 90 days, hardware on loan. Seven measured results, including energy within 0.5% of the site meter and acceptance of the monthly attestation. A successful pilot converts to a license, with fees credited.</p>
+<h2>In this room</h2>
+<ul class="toc">
+<li><a href="engineering/">Engineering</a>. Architecture, protocol, firmware, threat model, reference implementation, manufacturing.</li>
+<li><a href="bom/">Bill of materials</a>. Line items, roll-up, and the workbooks.</li>
+<li><a href="specification/">Specification</a>. Spec sheet, integration, test plan, certification path.</li>
+<li><a href="licensing/">Licensing</a>. Models, draft term sheet, and claim coverage.</li>
+<li><a href="questions/">Questions</a>. Diligence answers.</li>
+<li><a href="pilot/">Pilot</a>. Offer and a non-binding letter of intent.</li>
+<li><a href="measurements/">Measurements</a>. Reference-model source and raw results.</li>
+</ul>
+
+      <p class="contact">Monotropic Studios. Contact <a href="mailto:info@monotropicstudios.com">info@monotropicstudios.com</a>. Not an offer. Not legal advice.</p>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <title>Questions | MonoQube licensing | Monotropic Studios</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../room.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <a class="mark" href="../">MONOQUBE</a>
+    <p class="kicker">Licensing data room</p>
+    <a class="package" href="../monoqube-license-package.zip">Download full package</a>
+  </header>
+  <div class="layout">
+    <nav aria-label="Sections">
+      <a href="../">Overview</a>
+<a href="../engineering/">Engineering</a>
+<a href="../bom/">Bill of materials</a>
+<a href="../specification/">Specification</a>
+<a href="../licensing/">Licensing</a>
+<a href="../questions/" aria-current="page">Questions</a>
+<a href="../pilot/">Pilot</a>
+<a href="../measurements/">Measurements</a>
+    </nav>
+    <main id="content">
+      <article id="Licensee_FAQ"><h1>Licensee Diligence FAQ</h1>
+<p>Answers are factual where a source exists. "OPEN" means the studio or counsel must answer before a signing. Not legal advice.</p>
+<h2>A. The technology</h2>
+<p><strong>1. What is MonoQube in one sentence?</strong> A meter, identity check, and power gate that sits in the power path to a compute device, powers the device only while it holds a valid authorization, and writes a signed, tamper-evident record of who was powered, when, and how much, without reading anything from the device's workload.</p>
+<p><strong>2. Is it hardware, software, or a service?</strong> All three, licensable separately: the MQ-MAC controller and module (hardware reference design), the firmware and MQ-ATTEST protocol, and the authority, witness, and vault services. See <code>01_Engineering/01_System_Architecture.md</code>.</p>
+<p><strong>3. Does a working unit exist?</strong> No hardware unit yet. A software reference model of the full control and record logic exists and was measured on 22 Nov 2026 (<code>07_Measurements</code>). First hardware build is milestone M1.</p>
+<p><strong>4. What has been measured?</strong> 10,000 of 10,000 tamper attempts caught, 0 of 200 false alarms, 0 payload bytes in the record, 1.21% payload slowdown (meter on its own core), sign 31.2 µs, verify 85.6 µs, 220,477 records/s written. Sensor accuracy is modeled, not measured on hardware.</p>
+<p><strong>5. What accuracy will hardware achieve?</strong> Target 0.5% of reading. The ADE9000 metering chip is specified for class 0.2 use (CITED, ADI). Proven only after M1.</p>
+<p><strong>6. Can the record prove what software ran?</strong> No. It proves which identified device was powered, for how long, how much energy it drew, and under which authorization. The application itself says power data does not establish which algorithm ran (spec [0021]).</p>
+<p><strong>7. Can the operator fake the record?</strong> Edits, deletions, reordering, replay, backdating, and re-signing with a wrong key are all detected. Truncation is caught when an external witness holds the latest checkpoint, so the witness is mandatory in production. Physical CT bypass is caught by the neutral-imbalance check (design). See <code>01_Engineering/04_Security_and_Threat_Model.md</code>.</p>
+<p><strong>8. What if the network is down?</strong> The module keeps metering and signing locally (about 30 days of 1 s records), the authorization in force continues to its expiry, and the witness gap is visible in the record when the link returns.</p>
+<p><strong>9. What happens on module failure?</strong> Safety interlocks open in hardware. On firmware fault, behavior follows the authorization record: hold last state or open. Swapping a module creates a key-rotation link in the chain.</p>
+<p><strong>10. Which crypto?</strong> Production: ECDSA P-384 / SHA-384 inside the NXP SE052F, FIPS 140-3 validated (NIST CMVP #5139). Reference model: Ed25519. Post-quantum: ML-DSA-65 dual signing planned (suite 0x03).</p>
+<p><strong>11. Interfaces?</strong> REST and MQTT over mTLS 1.3, webhooks, Python/Go/TypeScript verifier SDKs (<code>03_Spec_Integration_Test_Cert/02_Integration_Guide.md</code>).</p>
+<p><strong>12. Does it work with liquid-cooled, 100 kW+ racks?</strong> Each module handles one feeder up to about 30 kW (design target). A high-density rack uses one module per feeder, or an OEM embeds the controller in its own high-current PDU or busway tap.</p>
+<h2>B. Cost, supply, and manufacturing</h2>
+<p><strong>13. What does it cost to build?</strong> Module $1,286.05 at 1, $897.60 at 100, $853.54 at 1,000 (parts plus assumed PCB, passives, assembly). Fully loaded $1,158 at 100 and $906 at 10,000. Sources and assumptions in <code>02_BOM</code>.</p>
+<p><strong>14. What dominates cost?</strong> The contactor (list $627.53 to $715.39). OEMs with their own switching need only the controller (about $226 at 1,000).</p>
+<p><strong>15. Supply risks?</strong> MCU and several small parts showed 0 stock on 22 Nov 2026 with lead times up to 52 weeks. Second sources and a buy-ahead are planned (<code>01_Engineering/06_Manufacturing_Assembly_and_Ramp.md</code>).</p>
+<p><strong>16. Who manufactures?</strong> Prototype houses first, then an EMS partner and a UL 508A panel shop, then licensees on their own lines. No CM contracted yet.</p>
+<h2>C. Certification and compliance</h2>
+<p><strong>17. Is it UL listed?</strong> No. Not yet submitted. Plan and budget in <code>03_Spec_Integration_Test_Cert/04_Certifications_and_UL_Path.md</code>.</p>
+<p><strong>18. Which standards?</strong> UL 61010-1 (or UL 62368-1 for IT-embedded SKUs), UL 508A panel, FCC Part 15 Class A, UL 2900-2-2 or IEC 62443-4-2, SOC 2 for the service, UL 2755 for the pod under NEC Article 646.</p>
+<p><strong>19. FIPS 140-3?</strong> The signing module is validated (CMVP #5139). The product will state "uses a FIPS 140-3 validated module"; it does not claim its own validation.</p>
+<p><strong>20. Export control?</strong> The firmware uses encryption, so an EAR Category 5 Part 2 classification is needed (likely a mass-market or 5A992 path). OPEN: counsel to self-classify or file.</p>
+<p><strong>21. Is remotely cutting power to financed equipment legal?</strong> OPEN for counsel. Lenders' self-help on default is governed by UCC 9-609 (repossession without breach of the peace) and by the credit agreement. The safe design: power-off on default only if the borrower agreed in writing, never for equipment that affects life safety, with notice periods set in the authorization record, and with the borrower able to see the policy. The gate also serves non-default uses (authorized hours, swap control).</p>
+<p><strong>22. Metrology rules for billing?</strong> If records are used to bill third parties for energy, state weights-and-measures rules may apply. OPEN: decide with the first pilot whether to pursue ANSI C12.20 class 0.5.</p>
+<p><strong>23. EU AI Act?</strong> Article 12 requires logging for high-risk AI systems, applying 2 December 2027 for Annex III systems and 2 August 2028 for Annex I under the 2026 Omnibus timeline, with logs kept at least six months. MonoQube records are infrastructure logs that can support this; they do not by themselves make a system compliant.</p>
+<h2>D. Intellectual property</h2>
+<p><strong>24. What is filed?</strong> PCT/US26/39996, filed 5 Aug 2026, priority to US provisionals 63/857,478 and 63/906,799. Pending, unpublished, no granted claims. See <code>04_Licensing/03_IP_Status_and_Claim_Coverage.md</code>.</p>
+<p><strong>25. When does it publish and when is national phase?</strong> About 5 Feb 2027 and about 5 Feb 2028.</p>
+<p><strong>26. Is the record's signature claimed?</strong> Not in the as-filed claims. The spec supports it ([0039], [0077]); a national-phase or continuation claim set is recommended.</p>
+<p><strong>27. Who owns the IP?</strong> Applicant is Monotropic Studios LLC. OPEN: an inventor-to-company assignment was not found in the records reviewed. Must be confirmed and recorded before signing.</p>
+<p><strong>28. Do co-founders or contributors hold rights?</strong> OPEN: two people are named in company materials as co-founders or contributors. Written IP assignments or confirmations that they made no inventive contribution are needed.</p>
+<p><strong>29. Any third-party rights through counsel fee programs?</strong> OPEN: the terms of the patent counsel's fee program (fee deferral or equity, if any) should be reviewed for liens or revenue shares on the IP.</p>
+<p><strong>30. Government rights?</strong> The Technical Volume D26BZ-DV010-0121 is a federal proposal document. OPEN: if any SBIR/STTR award was made, Bayh-Dole government license and SBIR data rights apply to subject inventions and data. Confirm award status; if no award, state that in writing.</p>
+<p><strong>31. Did any partner gain rights under an NDA?</strong> OPEN: a power-equipment OEM executed an NDA in December 2025 and held a technical call. Review that NDA for residuals, feedback, or joint-development clauses before granting any third party exclusivity in metering.</p>
+<p><strong>32. Freedom to operate?</strong> No FTO opinion exists. Intelligent PDU vendors, smart meter, and trusted-computing patents are the likely areas. OPEN: commission an FTO search before the first exclusive deal.</p>
+<p><strong>33. Has anyone been accused of infringement?</strong> No. No notice letters have been sent. All prior outreach was business development.</p>
+<p><strong>34. Prior public disclosure?</strong> OPEN: counsel to confirm that no enabling public disclosure (site, deck, pitch event) was made before the 5 Aug 2025 priority date, and that later disclosures are covered by the provisionals.</p>
+<h2>E. Commercial</h2>
+<p><strong>35. Pricing and royalties?</strong> <code>04_Licensing/01_License_Models_and_Rates.md</code>. Royalty 6% / 5% / 4% of net price by tier, $40 floor; or $0.002 per authorized device-hour.</p>
+<p><strong>36. Exclusivity available?</strong> Yes, by field of use, with minimum royalties. One field is reserved for a lender partner.</p>
+<p><strong>37. Who are the customers?</strong> None yet. Three pilots are defined (<code>06_Wedge_GTM/05_Pilot_Program_and_LOI.md</code>).</p>
+<p><strong>38. Why would a lender pay?</strong> Signed per-device evidence for draws and covenants, fewer site visits, and a controllable gate on default, for under 0.1% of the collateral's revenue.</p>
+<p><strong>39. Competitors?</strong> Intelligent PDUs (Raritan, Server Technology, Vertiv, Eaton, APC) meter power but the device reports through the operator's own systems and does not gate by device identity with a signed external record. Confidential computing (TPM, TEE attestation) proves software state but depends on the payload. DCIM tools aggregate, they do not attest. OPEN: a named feature comparison from vendor datasheets.</p>
+<p><strong>40. Can Monotropic support a licensee?</strong> The studio is small today. Two more engineers are planned. Support model in <code>01_Engineering/06_Manufacturing_Assembly_and_Ramp.md</code>. Escrow of firmware source is offered for exclusive licensees.</p>
+<p><strong>41. What if Monotropic fails?</strong> Source escrow, a perpetual paid-up license on bankruptcy for licensed products (11 U.S.C. 365(n) protects licensees of patents), and transfer of the trust root to a successor CA.</p>
+<p><strong>42. Who signs?</strong> Monotropic Studios. Write to info@monotropicstudios.com.</p></article>
+      <p class="contact">Monotropic Studios. Contact <a href="mailto:info@monotropicstudios.com">info@monotropicstudios.com</a>. Not an offer. Not legal advice.</p>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <title>Bill of materials | MonoQube licensing | Monotropic Studios</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../room.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <a class="mark" href="../">MONOQUBE</a>
+    <p class="kicker">Licensing data room</p>
+    <a class="package" href="../monoqube-license-package.zip">Download full package</a>
+  </header>
+  <div class="layout">
+    <nav aria-label="Sections">
+      <a href="../">Overview</a>
+<a href="../engineering/">Engineering</a>
+<a href="../bom/" aria-current="page">Bill of materials</a>
+<a href="../specification/">Specification</a>
+<a href="../licensing/">Licensing</a>
+<a href="../questions/">Questions</a>
+<a href="../pilot/">Pilot</a>
+<a href="../measurements/">Measurements</a>
+    </nav>
+    <main id="content">
+      <article id="BOM"><h1>Bill of Materials and Unit Cost</h1>
+<p>Prices are USD from live supplier pages retrieved 22 November 2026 (America/Los_Angeles). Every cited line links its page. Yellow lines in the XLSX are ASSUMPTIONS; RFQ lines are not priced and are excluded from totals.</p>
+<p>Files: <code>MonoQube_BOM.csv</code>, <code>MonoQube_BOM.xlsx</code> (BOM, Rollup with live formulas, Sources), <code>MonoQube_Unit_Economics.xlsx</code> (1 / 10 / 100 / 1k / 10k).</p>
+<h2>Roll-up per Meter Module (controller + one bay tag + power gate)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Qty 1</th>
+<th>Qty 100</th>
+<th>Qty 1,000</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MQ-MAC controller incl. assumption lines</td>
+<td>$570.66</td>
+<td>$270.07</td>
+<td>$226.01</td>
+</tr>
+<tr>
+<td>of which ASSUMPTION lines (PCB, misc, assembly/test)</td>
+<td>$330.00</td>
+<td>$74.00</td>
+<td>$39.00</td>
+</tr>
+<tr>
+<td>Power gate contactor (Newark list)</td>
+<td>$715.39</td>
+<td>$627.53</td>
+<td>$627.53</td>
+</tr>
+<tr>
+<td><strong>Meter Module total</strong></td>
+<td><strong>$1,286.05</strong></td>
+<td><strong>$897.60</strong></td>
+<td><strong>$853.54</strong></td>
+</tr>
+<tr>
+<td>Reference pod infrastructure, cited lines only (rack, PDU, UPS)</td>
+<td>$16,122.35</td>
+<td>quote</td>
+<td>quote</td>
+</tr>
+</tbody>
+</table></div>
+<p>The contactor is 73% of the module cost at 1,000 units. It is a list price from one distributor; direct or OEM pricing is the largest cost lever. An OEM licensee that already has a switching device in its PDU only needs the controller (about $226 at 1,000).</p>
+<h2>Unit economics by tier</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Units</th>
+<th>Module BOM incl. assembly</th>
+<th>Certification per unit</th>
+<th>Freight</th>
+<th>Warranty reserve</th>
+<th>Fully loaded cost</th>
+<th>Proposed price</th>
+<th>Gross margin</th>
+<th>Licensee royalty to Monotropic</th>
+<th>Margin after royalty</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>$1,286.05</td>
+<td>$5,000.00</td>
+<td>$45</td>
+<td>$130.00</td>
+<td>$6,461.05</td>
+<td>$6,500</td>
+<td>0.6%</td>
+<td>$390.00 (6% of net price, floor $40)</td>
+<td>-5.4%</td>
+</tr>
+<tr>
+<td>10</td>
+<td>$1,106.38</td>
+<td>$1,500.00</td>
+<td>$35</td>
+<td>$98.00</td>
+<td>$2,739.38</td>
+<td>$4,900</td>
+<td>44.1%</td>
+<td>$294.00 (6% of net price, floor $40)</td>
+<td>38.1%</td>
+</tr>
+<tr>
+<td>100</td>
+<td>$897.60</td>
+<td>$172.00</td>
+<td>$20</td>
+<td>$68.00</td>
+<td>$1,157.60</td>
+<td>$3,400</td>
+<td>66.0%</td>
+<td>$170.00 (5% of net price, floor $40)</td>
+<td>61.0%</td>
+</tr>
+<tr>
+<td>1,000</td>
+<td>$853.54</td>
+<td>$172.00</td>
+<td>$14</td>
+<td>$52.00</td>
+<td>$1,091.54</td>
+<td>$2,600</td>
+<td>58.0%</td>
+<td>$130.00 (5% of net price, floor $40)</td>
+<td>53.0%</td>
+</tr>
+<tr>
+<td>10,000</td>
+<td>$840.05</td>
+<td>$17.20</td>
+<td>$10</td>
+<td>$39.00</td>
+<td>$906.25</td>
+<td>$1,950</td>
+<td>53.5%</td>
+<td>$78.00 (4% of net price, floor $40)</td>
+<td>49.5%</td>
+</tr>
+</tbody>
+</table></div>
+<p>Notes on the table:</p>
+<ul>
+<li>Qty 10 and 10k component prices come from the same Digi-Key / Newark pages (10-piece and reel breaks; where no 10k break exists the highest published break is used). See <code>_build/unit_econ.py</code>.</li>
+<li>Certification: units 1 and 10 are pilot units under NRTL field evaluation (ASSUMPTION $5,000 per site and $1,500 per unit). From 100 up, a one-time listing program (ASSUMPTION $150,000, built from cited ranges in <code>03_Spec_Integration_Test_Cert/04_Certifications.md</code>) plus one year of upkeep ($22,000, top of the cited ETL range) is spread over the first 1,000 units.</li>
+<li>Freight is an ASSUMPTION pending carrier quotes. Warranty reserve is an ASSUMPTION of 2% of price; the cited 2025 average for US computer OEMs is 1.05% (Warranty Week, 16 July 2026).</li>
+<li>Prices and royalties are PROPOSALS. Unit 1 is effectively break-even because a single hand-built, field-evaluated unit carries its own certification cost. Pilots use loaned units (see <code>06_Wedge_GTM/05_Pilot_Program_and_LOI.md</code>).</li>
+<li>Recurring revenue is separate: PROPOSED $150 per module per month for the witness, vault, and reports service.</li>
+</ul>
+<h2>Line items</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Assembly</th>
+<th>Part</th>
+<th>MPN</th>
+<th>Supplier</th>
+<th>Qty</th>
+<th>@1</th>
+<th>@100</th>
+<th>@1k</th>
+<th>Basis</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>MQ-MAC controller</td>
+<td>MCU, Cortex-M33 + TrustZone, 2 MB flash, crypto accel (runtime controller)</td>
+<td>STM32H573ZIT6</td>
+<td>Digi-Key US 497-STM32H573ZIT6-ND</td>
+<td>1</td>
+<td>$12.25</td>
+<td>$8.14</td>
+<td>$7.48</td>
+<td>cited. 1k uses 720 break. 0 in stock, 360 due 19-May-2027</td>
+<td><a href="https://www.digikey.com/en/products/detail/stmicroelectronics/STM32H573ZIT6/21349059">link</a></td>
+</tr>
+<tr>
+<td>A2</td>
+<td>MQ-MAC controller</td>
+<td>Secure element, FIPS 140-3 L3 (CMVP #5139), pod signing key</td>
+<td>SE052F2HN2/Z019HJ</td>
+<td>Digi-Key US 568-SE052F2HN2/Z019HJCT-ND</td>
+<td>1</td>
+<td>$6.96</td>
+<td>$4.50</td>
+<td>$4.17</td>
+<td>cited. 1k uses 500 break (CT); 6k T&amp;R $3.79806</td>
+<td><a href="https://www.digikey.com/en/products/detail/nxp-usa-inc/SE052F2HN2-Z019HJ/24374710">link</a></td>
+</tr>
+<tr>
+<td>A3</td>
+<td>MQ-MAC controller</td>
+<td>Polyphase energy metering AFE, class 0.2 capable (ADI spec), 7 ch</td>
+<td>ADE9000ACPZ</td>
+<td>Digi-Key US 505-ADE9000ACPZ-ND</td>
+<td>1</td>
+<td>$22.49</td>
+<td>$16.09</td>
+<td>$14.69</td>
+<td>cited. 100 uses 57 break; 1k uses 513 break; ADI 1ku list 'from $10.39'</td>
+<td><a href="https://www.digikey.com/en/products/detail/analog-devices-inc/ADE9000ACPZ/6708866">link</a></td>
+</tr>
+<tr>
+<td>A4</td>
+<td>MQ-MAC controller</td>
+<td>Reinforced digital isolator with isolated power (mains side AFE to MCU)</td>
+<td>ISOW7841DWER</td>
+<td>Digi-Key US 296-45475-1-ND</td>
+<td>1</td>
+<td>$13.19</td>
+<td>$8.90</td>
+<td>$8.86</td>
+<td>cited. 1k uses 250 break (CT); 2k T&amp;R $7.97721. 0 in stock, due 09-Feb-2027</td>
+<td><a href="https://www.digikey.com/en/products/detail/texas-instruments/ISOW7841DWER/6820004">link</a></td>
+</tr>
+<tr>
+<td>A5</td>
+<td>Bay identity tag</td>
+<td>Crypto credential on each payload carrier (device identifier, claim 20)</td>
+<td>ATECC608B-MAHDA-T</td>
+<td>Digi-Key US 150-ATECC608B-MAHDA-TCT-ND</td>
+<td>1</td>
+<td>$0.87</td>
+<td>$0.86</td>
+<td>$0.86</td>
+<td>cited. Only 1 and 25 CT breaks published; 15k T&amp;R $0.70</td>
+<td><a href="https://www.digikey.com/en/products/detail/microchip-technology/ATECC608B-MAHDA-T/13415239">link</a></td>
+</tr>
+<tr>
+<td>A6</td>
+<td>MQ-MAC controller</td>
+<td>RTC, 1 ppm, battery switchover (record timebase)</td>
+<td>RV-3028-C7 32.768KHZ 1PPM-TA-QC</td>
+<td>Digi-Key US 2195-RV-3028-C732.768KHZ1PPM-TA-QCCT-ND</td>
+<td>1</td>
+<td>$2.41</td>
+<td>$1.46</td>
+<td>$1.35</td>
+<td>cited. 1k uses 1,000 T&amp;R. 0 in stock, due 07-May-2027</td>
+<td><a href="https://www.digikey.com/en/products/detail/micro-crystal-ag/RV-3028-C7-32-768KHZ-1PPM-TA-QC/10431070">link</a></td>
+</tr>
+<tr>
+<td>A7</td>
+<td>MQ-MAC controller</td>
+<td>F-RAM 1 Mbit (monotonic counter, ledger head, last checkpoint)</td>
+<td>FM25V10-G</td>
+<td>Digi-Key US 448-FM25V10-G-ND</td>
+<td>1</td>
+<td>$18.30</td>
+<td>$15.67</td>
+<td>$14.67</td>
+<td>cited. 100 uses 97 break; 1k uses 582 break</td>
+<td><a href="https://www.digikey.com/en/products/detail/infineon-technologies/FM25V10-G/3788992">link</a></td>
+</tr>
+<tr>
+<td>A8</td>
+<td>MQ-MAC controller</td>
+<td>NOR flash 128 Mbit (append-only ledger store)</td>
+<td>W25Q128JVSIQ</td>
+<td>Digi-Key US W25Q128JVSIQ-ND</td>
+<td>1</td>
+<td>$5.99</td>
+<td>$5.18</td>
+<td>$4.86</td>
+<td>cited. 100 uses 90 break; 1k uses 540 break</td>
+<td><a href="https://www.digikey.com/en/products/detail/winbond-electronics/W25Q128JVSIQ/5803943">link</a></td>
+</tr>
+<tr>
+<td>A9</td>
+<td>MQ-MAC controller</td>
+<td>10/100 Ethernet PHY (telemetry network only)</td>
+<td>DP83825IRMQR</td>
+<td>Digi-Key US 296-DP83825IRMQRCT-ND</td>
+<td>1</td>
+<td>$1.65</td>
+<td>$0.97</td>
+<td>$0.87</td>
+<td>cited.</td>
+<td><a href="https://www.digikey.com/en/products/detail/texas-instruments/DP83825IRMQR/10715364">link</a></td>
+</tr>
+<tr>
+<td>A10</td>
+<td>MQ-MAC controller</td>
+<td>RJ45 MagJack with magnetics</td>
+<td>0826-1X1T-23-F</td>
+<td>Digi-Key US 5923-0826-1X1T-23-F-ND</td>
+<td>1</td>
+<td>$9.23</td>
+<td>$6.66</td>
+<td>$5.76</td>
+<td>cited. 1k uses 800 break</td>
+<td><a href="https://www.digikey.com/en/products/detail/bel-fuse-inc/0826-1X1T-23-F/1635089">link</a></td>
+</tr>
+<tr>
+<td>A11</td>
+<td>MQ-MAC controller</td>
+<td>25 MHz crystal for PHY</td>
+<td>ABM8-25.000MHZ-B2-T</td>
+<td>Digi-Key US 535-9140-1-ND</td>
+<td>1</td>
+<td>$0.71</td>
+<td>$0.53</td>
+<td>$0.46</td>
+<td>cited.</td>
+<td><a href="https://www.digikey.com/en/products/detail/abracon-llc/ABM8-25-000MHZ-B2-T/675335">link</a></td>
+</tr>
+<tr>
+<td>A12</td>
+<td>MQ-MAC controller</td>
+<td>Temperature sensor +/-0.1 C (bay inlet, outlet, controller, meter)</td>
+<td>TMP117AIDRVR</td>
+<td>Digi-Key US 296-51834-1-ND</td>
+<td>4</td>
+<td>$6.29</td>
+<td>$4.78</td>
+<td>$4.36</td>
+<td>cited. 0 in stock, due 15-Dec-2026</td>
+<td><a href="https://www.digikey.com/en/products/detail/texas-instruments/TMP117AIDRVR/9685284">link</a></td>
+</tr>
+<tr>
+<td>A13</td>
+<td>MQ-MAC controller</td>
+<td>3-axis accelerometer (move / shock tamper)</td>
+<td>LIS2DW12TR</td>
+<td>Digi-Key US 497-17718-1-ND</td>
+<td>1</td>
+<td>$1.79</td>
+<td>$1.30</td>
+<td>$1.14</td>
+<td>cited. 0 in stock, due 30-Dec-2026</td>
+<td><a href="https://www.digikey.com/en/products/detail/stmicroelectronics/LIS2DW12TR/7348326">link</a></td>
+</tr>
+<tr>
+<td>A14</td>
+<td>MQ-MAC controller</td>
+<td>External watchdog (fail-safe gate open on firmware hang)</td>
+<td>TPS3431SDRBR</td>
+<td>Digi-Key US 296-51909-1-ND</td>
+<td>1</td>
+<td>$2.36</td>
+<td>$1.42</td>
+<td>$1.29</td>
+<td>cited. 0 in stock, due 08-Mar-2027</td>
+<td><a href="https://www.digikey.com/en/products/detail/texas-instruments/TPS3431SDRBR/9597847">link</a></td>
+</tr>
+<tr>
+<td>A15</td>
+<td>MQ-MAC controller</td>
+<td>24 V to 3.3 V switching regulator module</td>
+<td>R-78E3.3-1.0</td>
+<td>Digi-Key US 945-2409-5-ND</td>
+<td>2</td>
+<td>$4.51</td>
+<td>$4.05</td>
+<td>$3.90</td>
+<td>cited. 1k uses 500 break</td>
+<td><a href="https://www.digikey.com/en/products/detail/recom-power/R-78E3-3-1-0/5327711">link</a></td>
+</tr>
+<tr>
+<td>A16</td>
+<td>MQ-MAC controller</td>
+<td>Coil-drive relay, 16 A (two in series: MCU gate + hardware interlock chain)</td>
+<td>G2RL-1-E DC24</td>
+<td>Digi-Key US Z2835-ND</td>
+<td>2</td>
+<td>$4.06</td>
+<td>$3.22</td>
+<td>$2.87</td>
+<td>cited.</td>
+<td><a href="https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G2RL-1-E-DC24/368835">link</a></td>
+</tr>
+<tr>
+<td>A17</td>
+<td>MQ-MAC controller</td>
+<td>Current transformer 100 A, 1000:1, solid core (one per phase)</td>
+<td>CR8350-1000</td>
+<td>Digi-Key US CR8350-1000-ND</td>
+<td>3</td>
+<td>$16.82</td>
+<td>$16.82</td>
+<td>$16.82</td>
+<td>cited-qty1-only. ASSUMPTION: only a qty-1 price is published; 100/1k set equal to qty-1 until quoted. Non-stock, 20 wk lead</td>
+<td><a href="https://www.digikey.com/en/products/detail/cr-magnetics-inc/CR8350-1000/2500065">link</a></td>
+</tr>
+<tr>
+<td>A18</td>
+<td>MQ-MAC controller</td>
+<td>DIN-rail enclosure, PC, UL94 V-0</td>
+<td>1597DIN9GY</td>
+<td>Digi-Key US 164-1597DIN9GY-ND</td>
+<td>1</td>
+<td>$12.64</td>
+<td>$7.74</td>
+<td>$6.99</td>
+<td>cited. 1k uses 500 break</td>
+<td><a href="https://www.digikey.com/en/products/detail/hammond-manufacturing/1597DIN9GY/22148069">link</a></td>
+</tr>
+<tr>
+<td>A19</td>
+<td>MQ-MAC controller</td>
+<td>24 V DIN-rail PSU, 36 W, cULus (controller supply, on UPS-backed circuit)</td>
+<td>HDR-30-24</td>
+<td>Digi-Key US 1866-2244-ND</td>
+<td>1</td>
+<td>$15.40</td>
+<td>$13.60</td>
+<td>$13.60</td>
+<td>cited. Highest published break is 25; 100/1k use 25 break</td>
+<td><a href="https://www.digikey.com/en/products/detail/mean-well-usa-inc/HDR-30-24/7703799">link</a></td>
+</tr>
+<tr>
+<td>A20</td>
+<td>MQ-MAC controller</td>
+<td>Reed sensor, door / panel open (enclosure-access condition)</td>
+<td>59135-030</td>
+<td>Newark 10M9205</td>
+<td>2</td>
+<td>$10.83</td>
+<td>$9.46</td>
+<td>$9.27</td>
+<td>cited. 1k uses 250+ break</td>
+<td><a href="https://www.newark.com/littelfuse/59135-030/proximity-sensor/dp/10M9205">link</a></td>
+</tr>
+<tr>
+<td>A21</td>
+<td>MQ-MAC controller</td>
+<td>PCB, 6-layer, approx 150 x 85 mm, with isolation slot</td>
+<td>MQ-MAC-PCB-r0</td>
+<td>RFQ</td>
+<td>1</td>
+<td>$45.00</td>
+<td>$12.00</td>
+<td>$6.00</td>
+<td>assumption. ASSUMPTION: no live quote pulled; get PCBWay / JLCPCB / domestic quote</td>
+<td>-</td>
+</tr>
+<tr>
+<td>A22</td>
+<td>MQ-MAC controller</td>
+<td>Passives, HV divider resistors, TVS/MOV, fuses, terminal blocks, headers</td>
+<td>MQ-MAC-MISC</td>
+<td>RFQ</td>
+<td>1</td>
+<td>$35.00</td>
+<td>$22.00</td>
+<td>$15.00</td>
+<td>assumption. ASSUMPTION: lot estimate until schematic BOM is frozen</td>
+<td>-</td>
+</tr>
+<tr>
+<td>A23</td>
+<td>MQ-MAC controller</td>
+<td>SMT assembly, programming, key injection, functional test</td>
+<td>MQ-MAC-ASSY</td>
+<td>RFQ</td>
+<td>1</td>
+<td>$250.00</td>
+<td>$40.00</td>
+<td>$18.00</td>
+<td>assumption. ASSUMPTION: EMS quote required</td>
+<td>-</td>
+</tr>
+<tr>
+<td>B1</td>
+<td>Power gate (per 30 kW feeder)</td>
+<td>Contactor 3P 95 A AC-3, 24 VDC coil (the claimed power-switching device)</td>
+<td>LC1D95BD</td>
+<td>Newark 64M2689</td>
+<td>1</td>
+<td>$715.39</td>
+<td>$627.53</td>
+<td>$627.53</td>
+<td>cited. 100 and 1k use the 50+ break (highest published)</td>
+<td><a href="https://www.newark.com/schneider-electric/lc1d95bd/contactor-3pst-no-24vdc-dinrail/dp/64M2689">link</a></td>
+</tr>
+<tr>
+<td>C1</td>
+<td>Reference pod MQ-POD-10 (10 kW IT)</td>
+<td>42U rack, 600 x 1070 mm</td>
+<td>AR3100</td>
+<td>Newark 76K1322</td>
+<td>1</td>
+<td>$2,799.72</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>cited-qty1-only. Volume: quote</td>
+<td><a href="https://www.newark.com/apc/ar3100/rack-cabinet-42u/dp/76K1322">link</a></td>
+</tr>
+<tr>
+<td>C2</td>
+<td>Reference pod MQ-POD-10 (10 kW IT)</td>
+<td>Switched rack PDU 8.6 kW 208 V 3-ph (outlet switching only; MonoQube meter is the record)</td>
+<td>AP8965</td>
+<td>CompSource AP8965</td>
+<td>1</td>
+<td>$2,146.64</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>cited-qty1-only. Volume: quote</td>
+<td><a href="https://www.compsource.com/buy/AP8965/Apc-Schneider-37/Switched-Rack-AP8965-24Outlets-86kW-PDU/">link</a></td>
+</tr>
+<tr>
+<td>C3</td>
+<td>Reference pod MQ-POD-10 (10 kW IT)</td>
+<td>Online UPS 10 kVA / 10 kW 208 V (controller and payload ride-through)</td>
+<td>SRT10KXLT</td>
+<td>CDW 3590610</td>
+<td>1</td>
+<td>$11,175.99</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>cited-qty1-only. Advertised price; list $17,065</td>
+<td><a href="https://www.cdw.com/product/apc-smart-ups-on-line-10kva-10kw-tower-208v-4x-l6-20r-2x-l6-30r-nema-ou/3590610">link</a></td>
+</tr>
+<tr>
+<td>C4</td>
+<td>Reference pod MQ-POD-10 (10 kW IT)</td>
+<td>Vessel shell 12 x 8 ft: load-rated frame, insulated, EMI-shielded, forklift pockets</td>
+<td>MQ-VESSEL</td>
+<td>RFQ</td>
+<td>1</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>rfq. Not priced. Needs fabricator quote against drawings</td>
+<td>-</td>
+</tr>
+<tr>
+<td>C5</td>
+<td>Reference pod MQ-POD-10 (10 kW IT)</td>
+<td>Closed-loop cooling sized to IT load</td>
+<td>MQ-COOL</td>
+<td>RFQ</td>
+<td>1</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>rfq. Not priced</td>
+<td>-</td>
+</tr>
+<tr>
+<td>C6</td>
+<td>Reference pod MQ-POD-10 (10 kW IT)</td>
+<td>Dual-input transfer switch, UL 1008</td>
+<td>MQ-ATS</td>
+<td>RFQ</td>
+<td>1</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>rfq. Not priced</td>
+<td>-</td>
+</tr>
+<tr>
+<td>C7</td>
+<td>Reference pod MQ-POD-10 (10 kW IT)</td>
+<td>Panelboard, main breaker, SPD, feeders (UL 67 / UL 508A panel)</td>
+<td>MQ-ELEC</td>
+<td>RFQ</td>
+<td>1</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>rfq. Not priced</td>
+<td>-</td>
+</tr>
+<tr>
+<td>C8</td>
+<td>Reference pod MQ-POD-10 (10 kW IT)</td>
+<td>Fire detection and clean-agent suppression</td>
+<td>MQ-FIRE</td>
+<td>RFQ</td>
+<td>1</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>rfq. Not priced</td>
+<td>-</td>
+</tr>
+<tr>
+<td>C9</td>
+<td>Reference pod MQ-POD-10 (10 kW IT)</td>
+<td>Out-of-band link (LTE-M and optional satellite)</td>
+<td>MQ-OOB</td>
+<td>RFQ</td>
+<td>1</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>RFQ</td>
+<td>rfq. Not priced</td>
+<td>-</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Excluded from totals</h2>
+<p>Payload IT hardware, tariffs, NRE, tooling, enclosure shell, cooling, ATS, panelboard, fire suppression, OOB link (pod RFQ lines C4 to C9), and installation labor.</p>
+<h2>Why Digi-Key search pages are not linked</h2>
+<p>Digi-Key and Mouser search pages blocked automated reads from the box on 22 Nov 2026; product detail pages were read through a fetch service. Each link above is the exact product page the price came from.</p></article>
+<h2>Workbooks</h2><ul class="downloads"><li><a href="../files/02_BOM/MonoQube_BOM.csv">MonoQube_BOM.csv</a></li><li><a href="../files/02_BOM/MonoQube_BOM.xlsx">MonoQube_BOM.xlsx</a></li><li><a href="../files/02_BOM/MonoQube_Unit_Economics.xlsx">MonoQube_Unit_Economics.xlsx</a></li></ul>
+      <p class="contact">Monotropic Studios. Contact <a href="mailto:info@monotropicstudios.com">info@monotropicstudios.com</a>. Not an offer. Not legal advice.</p>
+    </main>
+  </div>
+</body>
+</html>

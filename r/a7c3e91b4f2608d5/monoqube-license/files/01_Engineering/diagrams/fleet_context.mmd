@@ -1,0 +1,17 @@
+flowchart TB
+  subgraph SITE[Customer site]
+    P1[Meter Module / Pod 1]
+    P2[Meter Module / Pod n]
+  end
+  AA[Authorization Authority\nissues signed authorization records]
+  WIT[Checkpoint Witness\ncountersigns ledger heads]
+  VER[Verifier SDK\nanyone with public keys]
+  CONS[Consumers: lender portal, auditor,\nbilling system, SIEM, DCIM]
+  MCA[Manufacturing CA\nHSM-backed, offline root]
+  MCA -. issues pod and tag certs .-> P1
+  AA -- AR over telemetry net or token --> P1
+  P1 -- checkpoints --> WIT
+  WIT -- signed receipts --> P1
+  P1 -- record bundles --> CONS
+  CONS --> VER
+  WIT --> VER

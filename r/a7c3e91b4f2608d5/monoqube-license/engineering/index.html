@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <title>Engineering | MonoQube licensing | Monotropic Studios</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../room.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <a class="mark" href="../">MONOQUBE</a>
+    <p class="kicker">Licensing data room</p>
+    <a class="package" href="../monoqube-license-package.zip">Download full package</a>
+  </header>
+  <div class="layout">
+    <nav aria-label="Sections">
+      <a href="../">Overview</a>
+<a href="../engineering/" aria-current="page">Engineering</a>
+<a href="../bom/">Bill of materials</a>
+<a href="../specification/">Specification</a>
+<a href="../licensing/">Licensing</a>
+<a href="../questions/">Questions</a>
+<a href="../pilot/">Pilot</a>
+<a href="../measurements/">Measurements</a>
+    </nav>
+    <main id="content">
+      <article id="01_System_Architecture"><h1>MonoQube System Architecture</h1>
+<p>Version 0.9 (licensee data room), 22 November 2026. Prepared for Monotropic Studios LLC. CONFIDENTIAL.</p>
+<p>Marking convention used in every file of this data room:</p>
+<ul>
+<li><strong>MEASURED</strong> means produced by a repeatable run in <code>07_Measurements/</code> (software reference model on a general-purpose server, not production hardware).</li>
+<li><strong>CITED</strong> means taken from a public page or document named next to it.</li>
+<li><strong>DESIGN TARGET</strong> means a number the design is built to hit. It has not been tested on hardware.</li>
+<li><strong>ASSUMPTION</strong> means a working value with no measurement or source yet. Each one needs the studio, counsel, or a quote to close.</li>
+</ul>
+<h2>1. What the system does</h2>
+<p>MonoQube moves the trust boundary for compute evidence outside the computer being measured. The hosting infrastructure, not the hosted machine, decides whether a machine may receive power, measures the power it draws, and writes a record that the hosted machine cannot edit. This follows the as-filed PCT/US26/39996 (claims 1 and 25, with dependents 5 to 13, 20, 21, 23, 26 to 29).</p>
+<p>Three properties define the product:</p>
+<ol>
+<li><strong>Gate.</strong> Power reaches a bay only when the runtime controller has verified the device identifier in that bay against a signed authorization record delivered on a channel separate from the device (spec [0030] to [0031]).</li>
+<li><strong>Meter.</strong> Voltage and current are sampled on the feeder by pod-side sensors. The device reports nothing that the meter relies on (claims 13, 28).</li>
+<li><strong>Record.</strong> Every authorization, gate change, metering window, envelope cut-off, tamper and fault event is appended to a hash-chained operating record and sealed by signed checkpoints from a secure element (claims 7 to 12, 29; spec [0039], [0077]).</li>
+</ol>
+<p>What it does not do, stated plainly so no licensee over-reads it: power evidence alone does not prove which algorithm ran or whether a result was correct (as-filed spec [0021]). MonoQube proves which identified hardware was energized, when, for how long, and how much energy it drew, under which authorization.</p>
+<h2>2. Product tiers</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Name</th>
+<th>What it is</th>
+<th>Who builds it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>MonoQube Meter Module (MQ-MM-30)</td>
+<td>DIN-rail runtime controller (MQ-MAC board) plus a power-gate contactor for one feeder up to about 30 kW at 208 V three-phase, plus one bay identity tag per hosted device</td>
+<td>Licensee EMS or Monotropic reference build</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>Metered rack</td>
+<td>T1 module integrated ahead of a standard rack PDU, one module per feeder</td>
+<td>PDU, rack, and server OEMs</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>MonoQube Pod (MQ-POD)</td>
+<td>Full 12 x 8 ft electrical-equipment vessel with 42U hardware-agnostic bay, dual-input power, UPS, cooling, EMI shielding, and the T1 control plane (from Monotropic Technical Volume D26BZ-DV010-0121)</td>
+<td>Licensed integrator / fabricator</td>
+</tr>
+</tbody>
+</table></div>
+<p>The beachhead in <code>06_Wedge_GTM</code> lands with T1 and T2 because they retrofit into existing racks in days. T3 is the expansion product for sites that need the full vessel.</p>
+<h2>3. Block diagram (T1 Meter Module)</h2>
+<figure><img src="../files/01_Engineering/diagrams/mm_block.svg" alt="Meter module block diagram"></figure>
+
+<p>Source file: <code>diagrams/mm_block.mmd</code> (SVG rendered alongside).</p>
+<p>Design rules enforced by the block structure:</p>
+<ul>
+<li>The hosted device has <strong>no electrical or logical path</strong> to the controller, the metering AFE, the secure element, or the ledger store. The bay tag bus is a separate two-wire bus on the bay connector that terminates at the controller.</li>
+<li>The <strong>telemetry network is physically separate</strong> from the compute network (two NICs, two switches; Technical Volume "Dual-Path Isolation").</li>
+<li>The contactor coil is driven through <strong>two relays in series</strong>: one from firmware, one from the hardware interlock chain. Firmware alone cannot hold power on if a door opens or the watchdog trips.</li>
+</ul>
+<h2>4. System context (fleet view)</h2>
+<figure><img src="../files/01_Engineering/diagrams/fleet_context.svg" alt="Fleet context diagram"></figure>
+
+<p>Source: <code>diagrams/fleet_context.mmd</code>.</p>
+<h2>5. Control sequence (insertion to cut-off)</h2>
+<figure><img src="../files/01_Engineering/diagrams/control_sequence.svg" alt="Control sequence diagram"></figure>
+
+<p>Source: <code>diagrams/control_sequence.mmd</code>.</p>
+<h2>6. Reference pod (T3) subsystem summary</h2>
+<p>From Monotropic Technical Volume D26BZ-DV010-0121 (June 2026). All values are <strong>DESIGN TARGETS</strong> until a prototype is tested.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Subsystem</th>
+<th>Design target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Envelope</td>
+<td>12 ft L x 8 ft W, flatbed transportable, forklift / crane interfaces, seismic anchoring to ASCE 7-22</td>
+</tr>
+<tr>
+<td>Bay</td>
+<td>Single 42U hardware-agnostic bay per IEC 60297; GPU, CPU, FPGA, co-processor inserts as tagged hot-swap modules</td>
+</tr>
+<tr>
+<td>Power</td>
+<td>3 to 30 kW dual-input, automatic transfer switch (UL 1008), integrated UPS about 15 min at full load, service under 400 A</td>
+</tr>
+<tr>
+<td>Metering</td>
+<td>Circuit-level metering, target accuracy better than +/-1% (Tim's volume); this data room sets a tighter target of +/-0.5% energy, see spec sheet</td>
+</tr>
+<tr>
+<td>Cooling</td>
+<td>Passive plus liquid hybrid, IP54, redundant pumps, closed loop above 95 F</td>
+</tr>
+<tr>
+<td>Shielding</td>
+<td>EMI shielding target above 60 dB (Tim's volume cites TEMPEST posture; no test performed)</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>Dual-path fiber, separate telemetry network, satellite out-of-band backup</td>
+</tr>
+<tr>
+<td>Crypto</td>
+<td>FIPS 140-3 validated module for keys; post-quantum migration path (FIPS 203 / 204)</td>
+</tr>
+<tr>
+<td>Permitting</td>
+<td>One AHJ review (Town of Blacksburg, VA) classified the enclosure as electrical equipment requiring UL listing and an electrical permit; treatment is site-specific (Tim's volume)</td>
+</tr>
+</tbody>
+</table></div>
+<h2>7. Why the architecture is hard to copy without a license</h2>
+<ul>
+<li>The claims cover the combination of <strong>device-identifier authorization, power gating, and pod-side measurement</strong> in a hosting structure, which is the minimum set needed to make the record independent of the payload. A competitor that drops any one leg loses the independence property.</li>
+<li>Software-only metering (in-guest agents, hypervisor counters, BMC telemetry) sits inside the trust boundary being evaluated (spec [0012], [0018], [0019]). That is the gap the product fills.</li>
+<li>Claim scope is pending and unpublished. See <code>04_Licensing/03_IP_Status_and_Claim_Coverage.md</code> for the honest status.</li>
+</ul></article>
+<article id="02_Protocol_Spec_MQ-ATTEST"><h1>MQ-ATTEST v0.9: Metering and Attestation Protocol</h1>
+<p>Status: draft specification for licensees, 22 November 2026. The reference model in <code>07_Measurements/src/monoqube_ref.py</code> implements suite 0x01 below. Production firmware implements suite 0x02.</p>
+<h2>1. Roles and keys</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Holds</th>
+<th>Key / credential</th>
+<th>Where it lives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Runtime controller (RC)</td>
+<td>Pod Attestation Key (PAK)</td>
+<td>ECDSA P-384 (suite 0x02) or Ed25519 (suite 0x01)</td>
+<td>Generated inside the secure element, never exported</td>
+</tr>
+<tr>
+<td>Bay tag (BT)</td>
+<td>Device Tag Key (DTK)</td>
+<td>ECDSA P-256</td>
+<td>ATECC608B on the device carrier, generated on chip</td>
+</tr>
+<tr>
+<td>Manufacturing CA (MCA)</td>
+<td>Signs pod and tag certificates</td>
+<td>ECDSA P-384</td>
+<td>Offline root plus HSM-backed issuing CA at the licensee factory</td>
+</tr>
+<tr>
+<td>Authorization Authority (AA)</td>
+<td>Issues Authorization Records (AR)</td>
+<td>ECDSA P-384</td>
+<td>Operator or lender side service; can be the licensee or the customer</td>
+</tr>
+<tr>
+<td>Checkpoint Witness (W)</td>
+<td>Countersigns ledger heads</td>
+<td>ECDSA P-384</td>
+<td>Independent service (Monotropic, licensee, auditor, or lender)</td>
+</tr>
+<tr>
+<td>Verifier (V)</td>
+<td>Nothing secret</td>
+<td>Public certs only</td>
+<td>Anyone</td>
+</tr>
+</tbody>
+</table></div>
+<h2>2. Cipher suites</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Signature</th>
+<th>Hash</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x01</td>
+<td>Ed25519</td>
+<td>SHA-256</td>
+<td>Reference model and demos only</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>ECDSA P-384 (FIPS 186-4/5)</td>
+<td>SHA-384</td>
+<td>Production. Algorithms are on the SE052F CMVP certificate #5139 approved list</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>ML-DSA-65 (FIPS 204) dual-signed with 0x02</td>
+<td>SHA-384</td>
+<td>Post-quantum migration once a validated module is available. ASSUMPTION: timing depends on vendor module validation</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ed25519 is <strong>not</strong> in the SE052F approved-algorithm list (CMVP #5139, checked 22 Nov 2026), so FIPS deployments must use 0x02.</p>
+<h2>3. Record format</h2>
+<p>Production encoding is deterministic CBOR (RFC 8949 section 4.2). The reference model uses canonical JSON (sorted keys, no whitespace). Field names are the same.</p>
+<p>Common header on every record:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>v</code></td>
+<td>uint</td>
+<td>Protocol version (9)</td>
+</tr>
+<tr>
+<td><code>suite</code></td>
+<td>uint</td>
+<td>Cipher suite ID</td>
+</tr>
+<tr>
+<td><code>pod</code></td>
+<td>tstr</td>
+<td>Pod serial, bound to the PAK certificate</td>
+</tr>
+<tr>
+<td><code>seq</code></td>
+<td>uint</td>
+<td>Strictly increasing from 0, persisted in F-RAM and mirrored to the SE monotonic counter at each checkpoint</td>
+</tr>
+<tr>
+<td><code>prev</code></td>
+<td>bstr</td>
+<td>Hash of the previous record (genesis = all zeros)</td>
+</tr>
+<tr>
+<td><code>t_ns</code></td>
+<td>uint</td>
+<td>Wall-clock time from the pod RTC, nanoseconds since Unix epoch</td>
+</tr>
+<tr>
+<td><code>mono</code></td>
+<td>uint</td>
+<td>Monotonic tick counter since boot (detects clock steps)</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>tstr</td>
+<td>One of the types in section 4</td>
+</tr>
+<tr>
+<td><code>hash</code></td>
+<td>bstr</td>
+<td>H(canonical(record without <code>hash</code> and <code>sig</code>))</td>
+</tr>
+<tr>
+<td><code>sig</code></td>
+<td>bstr</td>
+<td>Only on CHECKPOINT and KEY_ROTATE: PAK signature over <code>hash</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Records never contain payload data: no file contents, prompts, network payloads, or process names. MEASURED: a 62-second run produced 126 records and 43,423 bytes with zero hits for canary bytes planted in the payload's memory (<code>07_Measurements/results/overhead_extra.json</code>).</p>
+<h2>4. Record types</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Body fields</th>
+<th>Claim / spec anchor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BOOT</td>
+<td>fw_version, fw_hash, boot_reason, cal_id</td>
+<td>Secure boot evidence</td>
+</tr>
+<tr>
+<td>INSERT / REMOVE</td>
+<td>bay, presence</td>
+<td>Claim 12 (insertion, removal event)</td>
+</tr>
+<tr>
+<td>AUTHZ</td>
+<td>bay, device (tag cert hash), ar_id, state (authorized / unauthorized), reason</td>
+<td>Claims 1, 7, 25, 29</td>
+</tr>
+<tr>
+<td>GATE</td>
+<td>bay, gate (closed / open), cause</td>
+<td>Claims 6, 14 to 17, 27</td>
+</tr>
+<tr>
+<td>METER</td>
+<td>bay, window_ms, energy_mj, peak_mw, vrms_mv[3], irms_ma[4], pf_milli, n_samples</td>
+<td>Claims 7, 12, 19, 22</td>
+</tr>
+<tr>
+<td>ENVELOPE_CUTOFF</td>
+<td>bay, rule (power, current, temp, duration, window), observed, limit</td>
+<td>Spec [0031] to [0033]</td>
+</tr>
+<tr>
+<td>TAMPER</td>
+<td>source (door, accel, enclosure, tag_mismatch, neutral_imbalance), detail</td>
+<td>Claim 12 (fault-state), spec [0031] enclosure-access condition</td>
+</tr>
+<tr>
+<td>FAULT</td>
+<td>code, detail</td>
+<td>Claim 12</td>
+</tr>
+<tr>
+<td>TIME_SYNC</td>
+<td>source, offset_ns, auth (NTS / Roughtime)</td>
+<td>Timing information</td>
+</tr>
+<tr>
+<td>CHECKPOINT</td>
+<td>count, head, se_counter, witness_receipt_of_prev</td>
+<td>Spec [0039], [0077] verifiable summary</td>
+</tr>
+<tr>
+<td>SESSION_SUMMARY</td>
+<td>bay, device, ar_id, start_ns, end_ns, active_s, inactive_s, energy_wh, cutoffs, merkle_root</td>
+<td>Claims 10, 11, 21</td>
+</tr>
+<tr>
+<td>KEY_ROTATE</td>
+<td>new_pak_cert, reason</td>
+<td>Key lifecycle</td>
+</tr>
+</tbody>
+</table></div>
+<h2>5. Authorization Record (AR)</h2>
+<p>Issued by the AA and delivered to the RC over the telemetry network or a removable token. Never through the hosted device.</p>
+<pre><code class="language-json">{
+  &quot;ar_id&quot;: &quot;AR-2026-000123&quot;,
+  &quot;pod&quot;: &quot;MQ-MM-30-000042&quot;,
+  &quot;bay&quot;: 1,
+  &quot;device_tag_cert_sha384&quot;: &quot;9c1f...e2&quot;,
+  &quot;device_class&quot;: &quot;gpu-server-8x&quot;,
+  &quot;envelope&quot;: {&quot;max_w&quot;: 14300, &quot;min_w&quot;: 50, &quot;max_inlet_c&quot;: 35.0, &quot;max_a_per_phase&quot;: 48.0},
+  &quot;not_before&quot;: &quot;2026-12-01T00:00:00Z&quot;,
+  &quot;not_after&quot;: &quot;2027-03-01T00:00:00Z&quot;,
+  &quot;max_session_s&quot;: 2592000,
+  &quot;trust_tier&quot;: 2,
+  &quot;fail_policy&quot;: &quot;open_on_controller_fault&quot;,
+  &quot;issuer_cert_sha384&quot;: &quot;41ab...07&quot;,
+  &quot;sig&quot;: &quot;3066...a1&quot;
+}
+</code></pre>
+<p>Rules:</p>
+<ol>
+<li>Neither the tag alone nor the AR alone authorizes power (spec [0031]). Both must match.</li>
+<li>The RC permits the lesser of the requested and the authorized duration (spec [0031]).</li>
+<li><code>max_w</code> default for an NVIDIA DGX B200 class server would be its published maximum of about 14.3 kW (CITED: NVIDIA DGX B200 page). The operator sets the real value.</li>
+<li><code>fail_policy</code> is mandatory. Life-safety codes and the site's electrical design decide whether a controller fault opens or holds the gate. The record always logs which happened.</li>
+</ol>
+<h2>6. Insertion and authorization</h2>
+<ol>
+<li>Presence detect on the bay connector fires INSERT.</li>
+<li>RC sends a 32-byte random nonce from the SE TRNG to the tag over the bay bus.</li>
+<li>Tag returns ECDSA P-256 signature over (nonce || pod || bay) and its certificate.</li>
+<li>RC verifies the tag cert chain to the MCA, checks the signature, finds a valid AR whose <code>device_tag_cert_sha384</code> matches, checks window and envelope, and writes AUTHZ.</li>
+<li>If authorized and the hardware interlock chain is satisfied, RC closes the firmware relay. The contactor closes only if the interlock relay is also closed. RC writes GATE closed.</li>
+<li>If not authorized, RC writes AUTHZ unauthorized and GATE withheld.</li>
+</ol>
+<p>Re-evaluation: the tag challenge repeats every 60 s (configurable) and on any TAMPER interrupt. A failed re-check opens the gate (spec [0003] repeated re-evaluation).</p>
+<h2>7. Metering</h2>
+<ul>
+<li>ADE9000 samples at 8 or 32 kSPS internally and provides RMS, active power, and energy registers. RC reads every metering window (default 1,000 ms).</li>
+<li>RC computes energy for the window, peak power, and per-phase RMS, and appends METER.</li>
+<li>Neutral current channel is compared against the vector sum of phase currents. A mismatch above threshold raises TAMPER neutral_imbalance (detects a CT bypass on one phase).</li>
+<li>MEASURED (reference model, modeled sensor): with 0.5% Gaussian noise of reading, 16-bit ADC, 1 kHz sampling, 200 sessions of 60 s, mean absolute energy error 0.0022%, p95 0.0057%. With an added 0.2% standard-deviation gain error per sensor, mean 0.17%, p95 0.52%, max 0.62%. Calibration, not noise, dominates real accuracy. Source: <code>07_Measurements/results/accuracy*.json</code>.</li>
+</ul>
+<h2>8. Checkpoints and the witness</h2>
+<ul>
+<li>RC writes a CHECKPOINT at least every 1 s and at most every 1,000 records. The SE signs <code>hash</code>. The SE monotonic counter is incremented and its value included, so rolling back F-RAM is detectable.</li>
+<li>RC sends the checkpoint (seq, head, sig) to one or more Witnesses. The witness returns a signed receipt over (pod, seq, head, witness_time). RC stores the receipt in the next CHECKPOINT body.</li>
+<li>Why a witness is required: MEASURED tamper suite (1,000 trials each) detected 100% of edits, deletions, insertions, reorders, replays, backdating, and wrong-key forgeries, and 0% of truncation back to an earlier valid checkpoint when no external copy of the last checkpoint existed. With the verifier holding the last witnessed checkpoint, truncation detection was 100%. Source: <code>07_Measurements/results/tamper.json</code>.</li>
+</ul>
+<h2>9. Verification algorithm (what any third party runs)</h2>
+<p>Input: record bundle, PAK certificate chain, MCA root, optional witness receipts.</p>
+<ol>
+<li>Verify PAK cert chains to the MCA root and is not revoked (CRL or OCSP from the licensee).</li>
+<li>For i = 0..n-1: check <code>seq == i</code>, <code>prev == hash(i-1)</code>, recompute <code>hash</code>, check <code>t_ns</code> non-decreasing unless a TIME_SYNC record explains the step.</li>
+<li>Verify every <code>sig</code> on CHECKPOINT / KEY_ROTATE with the PAK.</li>
+<li>Last record must be a signed CHECKPOINT.</li>
+<li>If witness receipts are supplied, check the last witnessed (seq, head) is present and equal in the bundle (rollback / truncation test).</li>
+<li>Optional: recompute SESSION_SUMMARY totals from METER records and compare.</li>
+</ol>
+<p>MEASURED verify throughput in the reference model: 232,800 records per second on one core; Ed25519 verify p50 85.6 microseconds (<code>07_Measurements/results/throughput.json</code>, <code>crypto.json</code>).</p>
+<h2>10. Export interfaces</h2>
+<ul>
+<li>Pull: HTTPS with mutual TLS 1.3, <code>GET /v1/records?from_seq=&amp;to_seq=</code> returns a bundle.</li>
+<li>Push: webhook or MQTT of CHECKPOINT and SESSION_SUMMARY.</li>
+<li>File: signed bundle (<code>.mqb</code>, CBOR sequence plus certs) for air-gapped sites.</li>
+<li>Details and SDK examples: <code>03_Spec_Integration_Test_Cert/02_Integration_Guide.md</code>.</li>
+</ul>
+<h2>11. Open items</h2>
+<ul>
+<li>Choose the time authentication method per site (NTS RFC 8915 vs Roughtime). ASSUMPTION: NTS.</li>
+<li>Confirm SE052F supports the needed monotonic counter semantics or move the counter to an MCU secure OTP / RPMB scheme. Needs engineering check.</li>
+<li>Formal CDDL schema for every record type (draft in reference repo plan).</li>
+</ul></article>
+<article id="03_Firmware_and_Software"><h1>Firmware and Software Components</h1>
+<h2>1. Controller firmware (STM32H573, TrustZone)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Partition</th>
+<th>Function</th>
+<th>Base (licensee may substitute)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Immutable root of trust</td>
+<td>ROM / secure</td>
+<td>Verifies the next stage, enforces lifecycle state</td>
+<td>ST STiROT or OEMiRoT</td>
+</tr>
+<tr>
+<td>Secure bootloader</td>
+<td>Secure</td>
+<td>Verifies signed images, anti-rollback counter, A/B slots</td>
+<td>MCUboot (Apache-2.0)</td>
+</tr>
+<tr>
+<td>Attestation service</td>
+<td>Secure (TF-M partition)</td>
+<td>Owns the SE session, builds and signs CHECKPOINT and SESSION_SUMMARY, holds ledger head</td>
+<td>Trusted Firmware-M (BSD-3)</td>
+</tr>
+<tr>
+<td>Ledger store</td>
+<td>Secure</td>
+<td>Append-only log in NOR flash, head and seq in F-RAM, wear leveling, never rewrites a committed page</td>
+<td>Monotropic</td>
+</tr>
+<tr>
+<td>Authorization engine</td>
+<td>Secure</td>
+<td>Tag challenge, AR verify, envelope rules, duration limits, re-evaluation timer</td>
+<td>Monotropic</td>
+</tr>
+<tr>
+<td>Gate driver</td>
+<td>Secure</td>
+<td>Drives firmware relay; reads contactor auxiliary contact to confirm actual state; logs mismatch as FAULT</td>
+<td>Monotropic</td>
+</tr>
+<tr>
+<td>Metering task</td>
+<td>Non-secure, read-only path into secure</td>
+<td>Reads ADE9000 over isolated SPI, computes windows, calibration constants signed at factory</td>
+<td>Monotropic + ADI reference</td>
+</tr>
+<tr>
+<td>Tamper monitor</td>
+<td>Secure</td>
+<td>Door sensors, accelerometer wake, neutral imbalance, enclosure open</td>
+<td>Monotropic</td>
+</tr>
+<tr>
+<td>Time service</td>
+<td>Non-secure</td>
+<td>NTS client, RTC discipline, TIME_SYNC records</td>
+<td>open-source NTS client</td>
+</tr>
+<tr>
+<td>Network stack</td>
+<td>Non-secure</td>
+<td>lwIP, TLS 1.3 (mbedTLS) with keys in SE, REST server, MQTT client</td>
+<td>lwIP, Mbed TLS</td>
+</tr>
+<tr>
+<td>Update agent</td>
+<td>Non-secure + bootloader</td>
+<td>Pulls signed images, staged install, rollback protection</td>
+<td>MCUboot</td>
+</tr>
+</tbody>
+</table></div>
+<p>Design rules:</p>
+<ol>
+<li>The hosted device cannot reach any of this. The only external interfaces are the telemetry Ethernet port, the bay tag bus, and a local service port that is disabled after provisioning.</li>
+<li>The hardware interlock chain (doors, watchdog, fault) can open the gate with the MCU halted. Firmware cannot override it.</li>
+<li>Every firmware image hash is logged in BOOT. A verifier can reject records produced by an unapproved image.</li>
+</ol>
+<h2>2. Fleet and cloud software</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Function</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Authorization Authority</td>
+<td>Issues and revokes ARs; policy templates (lender, operator, auditor)</td>
+<td>Can be self-hosted by the customer; HSM keys</td>
+</tr>
+<tr>
+<td>Checkpoint Witness</td>
+<td>Countersigns ledger heads; append-only transparency log of heads</td>
+<td>Multiple witnesses supported; lender can run its own</td>
+</tr>
+<tr>
+<td>Record Vault</td>
+<td>Stores bundles, indexes by pod / bay / device / session</td>
+<td>Object storage plus index; no payload data</td>
+</tr>
+<tr>
+<td>Verifier SDK</td>
+<td>Verifies bundles offline</td>
+<td>Python (reference exists), Go, TypeScript planned</td>
+</tr>
+<tr>
+<td>Reports</td>
+<td>Usage statements, collateral attestations, evidence packs (SOC 2, EU AI Act Article 12 log support)</td>
+<td>PDF + JSON, signed</td>
+</tr>
+<tr>
+<td>Connectors</td>
+<td>Billing (usage events to Stripe Billing, Metronome, Orb), SIEM (syslog / CEF), DCIM (SNMP / Redfish read-only), lender portals (CSV / API)</td>
+<td>ASSUMPTION: connector list to be confirmed by pilot partners</td>
+</tr>
+</tbody>
+</table></div>
+<h2>3. Manufacturing and provisioning tools</h2>
+<ul>
+<li>Key-injection station: asks the SE to generate the PAK internally, reads the CSR, signs with the issuing CA in an HSM, writes the cert back. Private keys never leave the SE.</li>
+<li>Calibration station: compares the module against a reference meter at the test points in <code>03_Spec_Integration_Test_Cert/03_Test_and_Validation_Plan.md</code>, writes signed calibration constants, records cal_id.</li>
+<li>Tag provisioning: ATECC608B on each carrier generates its DTK; tag cert issued by the MCA with the device serial and class.</li>
+</ul>
+<h2>4. Licensing of software</h2>
+<p>Open-source components listed above are permissive licenses (Apache-2.0, BSD-3). The Monotropic components (ledger, authorization engine, attestation service, gate driver, tamper monitor, verifier, witness) are licensed under the patent and software license in <code>04_Licensing/02_Draft_Term_Sheet.md</code>. ASSUMPTION: Monotropic retains copyright in the reference firmware once written; licensee gets a source license.</p></article>
+<article id="04_Security_and_Threat_Model"><h1>Security and Threat Model</h1>
+<h2>1. Assets</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Asset</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Operating record integrity</td>
+<td>The product is the record. If it can be edited, nothing else matters.</td>
+</tr>
+<tr>
+<td>Pod Attestation Key (PAK)</td>
+<td>Signs checkpoints. Extraction allows forgery.</td>
+</tr>
+<tr>
+<td>Authorization Records and AA key</td>
+<td>Control who gets power.</td>
+</tr>
+<tr>
+<td>Gate state</td>
+<td>Physical control of a financed or regulated asset.</td>
+</tr>
+<tr>
+<td>Meter accuracy</td>
+<td>Billing, collateral and evidence value depend on it.</td>
+</tr>
+<tr>
+<td>Calibration constants</td>
+<td>Altering them skews energy quietly.</td>
+</tr>
+</tbody>
+</table></div>
+<h2>2. Adversaries</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Adversary</th>
+<th>Goal</th>
+<th>Capability assumed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tenant / payload operator</td>
+<td>Under-report use, run unauthorized hardware, hide activity</td>
+<td>Full root on the hosted machine; physical access to the rack front</td>
+</tr>
+<tr>
+<td>Asset owner / borrower</td>
+<td>Hide removal or idling of collateral, inflate utilization for a draw</td>
+<td>Physical access to the site, can open doors, can cut power, can image storage</td>
+</tr>
+<tr>
+<td>Network attacker</td>
+<td>Forge or replay records, block exports</td>
+<td>On the telemetry network</td>
+</tr>
+<tr>
+<td>Insider at licensee or Monotropic</td>
+<td>Issue rogue certs or ARs</td>
+<td>Access to CA or AA systems</td>
+</tr>
+<tr>
+<td>Supply-chain attacker</td>
+<td>Implant firmware or swap components</td>
+<td>Access before delivery</td>
+</tr>
+</tbody>
+</table></div>
+<h2>3. STRIDE table</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Example</th>
+<th>Control</th>
+<th>Residual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spoofing a device</td>
+<td>Clone a bay tag to make an unapproved server look approved</td>
+<td>DTK generated and held in ATECC608B, challenge-response every 60 s with fresh nonce</td>
+<td>Physical extraction attacks on the tag chip; tag bound to carrier by tamper-evident mount</td>
+</tr>
+<tr>
+<td>Spoofing a pod</td>
+<td>Fake meter emits records</td>
+<td>PAK in SE052F (FIPS 140-3 L3, physical L4, CMVP #5139); pod cert chain</td>
+<td>Compromise of MCA</td>
+</tr>
+<tr>
+<td>Tampering with records</td>
+<td>Edit energy values</td>
+<td>Hash chain + signed checkpoints. MEASURED 100% detection across 10 attack classes x 1,000 trials</td>
+<td>None found in model</td>
+</tr>
+<tr>
+<td>Tampering by truncation</td>
+<td>Roll ledger back to an earlier valid checkpoint</td>
+<td>Witness receipts + SE monotonic counter. MEASURED 0% detection without witness, 100% with</td>
+<td>Requires at least one honest witness</td>
+</tr>
+<tr>
+<td>Tampering with measurement</td>
+<td>Bypass CT on one phase</td>
+<td>Neutral-current vs phase-sum check, upstream feeder metering, door sensors</td>
+<td>A skilled electrician with the panel open; logged as TAMPER door open first</td>
+</tr>
+<tr>
+<td>Tampering with calibration</td>
+<td>Change gain constants</td>
+<td>Constants signed at factory, cal_id in BOOT, verifier pins approved cal_ids</td>
+<td>Factory insider</td>
+</tr>
+<tr>
+<td>Repudiation</td>
+<td>Owner says "the meter was down"</td>
+<td>BOOT, FAULT, GATE records; UPS-backed controller; last-gasp checkpoint</td>
+<td>Total destruction of the module</td>
+</tr>
+<tr>
+<td>Information disclosure</td>
+<td>Records leak workload secrets</td>
+<td>Records contain no payload content. MEASURED 0 payload bytes</td>
+<td>Power side channels (coarse, 1 s windows); document in customer DPA</td>
+</tr>
+<tr>
+<td>Denial of service</td>
+<td>Kill the telemetry link</td>
+<td>Local ledger continues; witness gap is visible; OOB link option</td>
+<td>Long outages delay evidence, do not erase it</td>
+</tr>
+<tr>
+<td>Elevation of privilege</td>
+<td>Payload gains control of gate</td>
+<td>No path from payload to controller; separate network; hardware interlock</td>
+<td>Misconfigured site wiring; covered in install checklist</td>
+</tr>
+<tr>
+<td>Time manipulation</td>
+<td>Backdate sessions</td>
+<td>Authenticated time (NTS), monotonic counter, TIME_SYNC logging. MEASURED backdating detection 100% in model</td>
+<td>RTC drift if offline for months (1 ppm RTC is about 2.6 s per month)</td>
+</tr>
+<tr>
+<td>Rogue authorization</td>
+<td>Insider issues AR for unapproved hardware</td>
+<td>AA keys in HSM, dual control, every AR id logged in AUTHZ and visible to verifier</td>
+<td>Collusion</td>
+</tr>
+</tbody>
+</table></div>
+<h2>4. Safety versus security</h2>
+<p>A power gate on IT equipment is a safety-relevant function. Rules:</p>
+<ul>
+<li>The gate never defeats life-safety systems (EPO, fire alarm shunt trip). Those sit upstream and override.</li>
+<li><code>fail_policy</code> in the AR is explicit and logged.</li>
+<li>Remote cut-off for credit or contract reasons is a commercial and legal decision outside the protocol. See <code>05_FAQ/Licensee_FAQ.md</code> (remote disablement) and get counsel review before any lender uses it.</li>
+</ul>
+<h2>5. Limits stated plainly</h2>
+<ol>
+<li>Power evidence does not prove which software ran or that outputs are correct (as-filed spec [0021]). Pairing with a trusted workload signal (GPU confidential-computing attestation, TPM quotes) is an integration option, not a claim.</li>
+<li>The reference model numbers are software results with modeled sensors. Hardware results come from the validation plan.</li>
+<li>No third-party penetration test has been done yet.</li>
+</ol></article>
+<article id="05_Reference_Implementation"><h1>Reference Implementation Layout</h1>
+<h2>1. What exists today (MEASURED, reproducible)</h2>
+<p><code>07_Measurements/</code> is a copy of the reference prototype built 22 November 2026 (source: <code>/workspace/monoqube-mvp-metrics/</code>).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Path</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/monoqube_ref.py</code></td>
+<td>Software model of the controller: identifier reader (stands in for the bay tag bus), authorization records, power gate state, modeled branch-circuit sensor, hash-chained ledger with Ed25519 signed checkpoints, external verifier</td>
+</tr>
+<tr>
+<td><code>src/bench.py</code></td>
+<td>Benchmarks: crypto timing, throughput, tamper suite, accuracy vs ground truth, payload overhead and payload exposure</td>
+</tr>
+<tr>
+<td><code>run_all.sh</code></td>
+<td>Runs every benchmark (about six minutes) and writes <code>results/*.json</code></td>
+</tr>
+<tr>
+<td><code>results/</code></td>
+<td>Raw results, environment record (<code>env.json</code>: Python 3.13.5, cryptography 43.0.0, 8-core Xeon, seed 20261122)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Headline results (MEASURED, software model, not hardware):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tamper attacks detected (10 types x 1,000)</td>
+<td>10,000 / 10,000</td>
+</tr>
+<tr>
+<td>Truncation detected with witnessed checkpoint / without</td>
+<td>1,000 / 1,000 and 0 / 1,000</td>
+</tr>
+<tr>
+<td>False positives on clean ledgers</td>
+<td>0 / 200</td>
+</tr>
+<tr>
+<td>Payload bytes in record (canary scan)</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Payload slowdown, meter on other core / same core</td>
+<td>1.21% / 4.59% median</td>
+</tr>
+<tr>
+<td>Meter CPU at 1 kHz sampling, 1 signed checkpoint/s</td>
+<td>about 6% of one core</td>
+</tr>
+<tr>
+<td>Ed25519 sign / verify p50</td>
+<td>31.2 / 85.6 microseconds</td>
+</tr>
+<tr>
+<td>Append rate (hash chain, checkpoint per 1,000)</td>
+<td>220,477 records/s</td>
+</tr>
+<tr>
+<td>Verify rate</td>
+<td>232,800 records/s</td>
+</tr>
+<tr>
+<td>Energy error, modeled 0.5% sensor</td>
+<td>0.0022% mean, 0.0095% max</td>
+</tr>
+<tr>
+<td>Energy error with 0.2% gain error</td>
+<td>0.17% mean, 0.62% max</td>
+</tr>
+</tbody>
+</table></div>
+<h2>2. Production repository plan (to be built; layout fixed now so licensees can plan)</h2>
+<pre><code>monoqube/
+  firmware/
+    boot/            MCUboot config, signing keys (HSM refs only)
+    tfm-partition/   attestation service, ledger, authz engine, gate driver, tamper
+    ns-app/          metering task, NTS client, REST/MQTT, update agent
+    drivers/         ade9000, se052f, atecc608b, fm25v10, w25q128, tmp117, lis2dw12
+    cal/             calibration constant format + signer
+    tests/           unit tests, HIL scripts
+  hardware/
+    mq-mac/          schematic, layout, fab notes, BOM (02_BOM is the costed version)
+    bay-tag/         tag carrier board
+    panel/           UL 508A panel drawings for module + contactor
+  services/
+    authority/       AR issuance, revocation, policy templates
+    witness/         checkpoint countersigning, transparency log
+    vault/           bundle storage and index
+    reports/         usage statements, collateral attestation, evidence packs
+  sdk/
+    python/          verifier (port of monoqube_ref.verify), bundle tools
+    go/              verifier
+    ts/              verifier for browser portals
+  spec/
+    mq-attest.cddl   record schemas
+    test-vectors/    signed sample bundles (good and tampered)
+  tools/
+    provisioning/    key injection station, tag provisioning
+    calibration/     calibration station scripts
+</code></pre>
+<h2>3. Sample operating record (from the reference model)</h2>
+<pre><code>{&quot;pod&quot;:&quot;POD-REF-1&quot;,&quot;seq&quot;:1,&quot;type&quot;:&quot;meter&quot;,&quot;bay&quot;:1,&quot;device&quot;:&quot;DEV-A&quot;,&quot;energy_mj&quot;:174705,&quot;peak_mw&quot;:403748,&quot;n&quot;:1001,&quot;prev&quot;:&quot;e839...d902&quot;,&quot;hash&quot;:&quot;3a32...3f96&quot;}
+{&quot;pod&quot;:&quot;POD-REF-1&quot;,&quot;seq&quot;:2,&quot;type&quot;:&quot;checkpoint&quot;,&quot;count&quot;:2,&quot;hash&quot;:&quot;fb20...5f5c&quot;,&quot;sig&quot;:&quot;adb2...df07&quot;}
+</code></pre>
+<p>This is a sample audit export. The production format adds the header fields in the protocol spec (version, suite, monotonic tick, witness receipt).</p>
+<h2>4. How to reproduce</h2>
+<pre><code>cd 07_Measurements &amp;&amp; ./run_all.sh
+</code></pre>
+<p>Requires Python 3.11+ and the <code>cryptography</code> package.</p></article>
+<article id="06_Manufacturing_Assembly_and_Ramp"><h1>Manufacturing, Assembly, and Deployment Ramp (unit 1 to 10,000)</h1>
+<p>All volumes and dates are ASSUMPTIONS for planning unless marked.</p>
+<h2>1. Build flow for the Meter Module (T1)</h2>
+<ol>
+<li><strong>PCBA (MQ-MAC):</strong> 6-layer board, IPC-A-610 Class 2 minimum (Class 3 for defense SKUs), isolation slot under the ISOW7841, conformal coat on the mains side. Built by an EMS partner.</li>
+<li><strong>Programming and key injection:</strong> in a controlled room. The SE052F generates the Pod Attestation Key internally. The station reads the CSR, the issuing CA in an HSM signs it, the cert is written back. No private key exists outside the chip.</li>
+<li><strong>Calibration:</strong> each module is run against a reference power standard at the test points in the validation plan. Gain and phase constants are signed and stored with a cal_id.</li>
+<li><strong>Functional test:</strong> gate cycle, tag challenge, tamper inputs, watchdog trip, record export and verify. A failed unit's key is revoked before scrap.</li>
+<li><strong>Panel assembly:</strong> controller, contactor, CTs, terminals, and PSU are mounted and wired in a UL 508A listed panel shop so the assembly carries the panel label.</li>
+<li><strong>Pack and ship:</strong> tamper-evident seal over the service port, serial and cert fingerprint on the label.</li>
+</ol>
+<h2>2. Ramp plan</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Units (cumulative)</th>
+<th>Timing from funding (ASSUMPTION)</th>
+<th>Who builds</th>
+<th>Gate to next phase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0 Engineering build</td>
+<td>1 to 5</td>
+<td>Months 0 to 4</td>
+<td>Prototype house (quick-turn PCBA) + in-house assembly</td>
+<td>Bench accuracy within target, protocol conformance, pre-compliance EMC scan</td>
+</tr>
+<tr>
+<td>P1 Pilot fleet</td>
+<td>10 to 25</td>
+<td>Months 4 to 7</td>
+<td>Same, with NRTL field evaluation per site</td>
+<td>3 pilots live, success metrics met, design freeze</td>
+</tr>
+<tr>
+<td>P2 Listed product</td>
+<td>100</td>
+<td>Months 7 to 12</td>
+<td>EMS partner, low-volume line; UL 508A panel shop</td>
+<td>NRTL listing, FCC Part 15 Class A, pen test closed</td>
+</tr>
+<tr>
+<td>P3 Scale-up</td>
+<td>1,000</td>
+<td>Months 12 to 24</td>
+<td>EMS partner with box build; licensee OEM begins own builds</td>
+<td>First royalty-bearing licensee shipping</td>
+</tr>
+<tr>
+<td>P4 Volume</td>
+<td>10,000</td>
+<td>Months 24 to 48</td>
+<td>Licensee OEM lines (PDU / rack makers) plus EMS second source</td>
+<td>Royalty reporting automated from the licensee ledger</td>
+</tr>
+</tbody>
+</table></div>
+<p>At P3 and beyond the licensing model means most units are built by licensees on their own lines. Monotropic keeps the reference design, test spec, key-injection CA policy, and conformance program.</p>
+<h2>3. Contract manufacturer and assembly options</h2>
+<p>These are named as candidates with public capabilities. None has been contacted. Quotes are needed.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Candidates</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quick-turn prototype PCBA (P0 to P1)</td>
+<td>Screaming Circuits (Milwaukie, OR), MacroFab (Houston, TX), PCBWay / JLCPCB (overseas, low cost)</td>
+<td>Low minimums, online quoting</td>
+</tr>
+<tr>
+<td>Low to mid volume EMS with box build (P2 to P3)</td>
+<td>Kimball Electronics, Benchmark Electronics, SMTC, Sanmina</td>
+<td>Industrial and regulated product lines, US sites</td>
+</tr>
+<tr>
+<td>UL 508A panel assembly</td>
+<td>Any UL 508A listed panel shop near the EMS (UL Product iQ lists them)</td>
+<td>Panel label is what the AHJ inspector looks for</td>
+</tr>
+<tr>
+<td>Volume (P4)</td>
+<td>Licensee in-house lines (PDU, rack, server OEMs) or tier-one EMS (Jabil, Flex, Celestica)</td>
+<td>Royalty model means licensee builds</td>
+</tr>
+</tbody>
+</table></div>
+<h2>4. Supply-chain risks (from the live supplier pages, 22 Nov 2026)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Observation</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STM32H573ZIT6 (MCU)</td>
+<td>0 in stock at Digi-Key, 360 due 19 May 2027, 52 week factory lead</td>
+<td>Buy ahead at P0 funding; qualify NXP i.MX RT1170 or Microchip PIC32CZ as second source; keep firmware HAL portable</td>
+</tr>
+<tr>
+<td>ISOW7841DWER</td>
+<td>0 in stock, due Feb 2027, 26 week lead</td>
+<td>ISOW7841DWE (different packing) or ADuM5401 + ADuM1401 pair</td>
+</tr>
+<tr>
+<td>RV-3028-C7 RTC</td>
+<td>0 in stock, due May 2027</td>
+<td>MCU internal RTC with VBAT as fallback; Abracon AB1805</td>
+</tr>
+<tr>
+<td>TMP117, LIS2DW12, TPS3431</td>
+<td>0 in stock, due Dec 2026 to Mar 2027</td>
+<td>Substitutes listed by Digi-Key (Bosch BMA456 in stock for the accelerometer); keep footprints compatible</td>
+</tr>
+<tr>
+<td>ADE9000</td>
+<td>In stock 559, 44 week lead</td>
+<td>Buy P0 to P2 needs up front; ADE9078 as pin-compatible lower-cost option</td>
+</tr>
+<tr>
+<td>CR8350-1000 CT</td>
+<td>Non-stock, 20 week lead, qty-1 price only</td>
+<td>Quote CR Magnetics direct; second source split-core CTs (Magnelab SCT-0750-100) for retrofit SKUs</td>
+</tr>
+<tr>
+<td>LC1D95BD contactor</td>
+<td>Newark list $715.39, 1 in stock</td>
+<td>Biggest cost line. Quote Schneider distribution direct, ABB AF96, Siemens 3RT; allow OEM licensees to use their own switching device</td>
+</tr>
+<tr>
+<td>SE052F</td>
+<td>9,738 in stock</td>
+<td>Hold 12 months of buffer; SE050F (FIPS 140-2) as fallback for non-FIPS customers</td>
+</tr>
+<tr>
+<td>Tariffs</td>
+<td>Digi-Key pages note tariffs may apply on US shipments</td>
+<td>Price quotes landed, not ex-works</td>
+</tr>
+</tbody>
+</table></div>
+<h2>5. Field install and support model</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Install</td>
+<td>Licensed electrician installs the panel on the feeder under a normal electrical permit; MonoQube install checklist (wiring, CT orientation, tag pairing, network separation) signed off in the app; site acceptance test writes a signed SAT record into the ledger</td>
+</tr>
+<tr>
+<td>Time on site</td>
+<td>DESIGN TARGET half a day per rack feeder for retrofit (ASSUMPTION, to be measured in pilots)</td>
+</tr>
+<tr>
+<td>Commissioning</td>
+<td>AR issued by the customer's authority; first checkpoint witnessed; verifier run against the SAT bundle</td>
+</tr>
+<tr>
+<td>Support tiers</td>
+<td>Tier 1 licensee or channel partner; Tier 2 Monotropic remote (records, keys, witness); Tier 3 engineering</td>
+</tr>
+<tr>
+<td>Spares</td>
+<td>Swap-in module; keys are per module, so a swap creates a KEY_ROTATE chain link visible to auditors</td>
+</tr>
+<tr>
+<td>Monitoring</td>
+<td>Witness gaps and FAULT records alert the support desk automatically</td>
+</tr>
+<tr>
+<td>Warranty</td>
+<td>PROPOSED 2 years hardware; reserve 2% of price (cited OEM average 1.05%)</td>
+</tr>
+</tbody>
+</table></div>
+<h2>6. Pod (T3) build notes</h2>
+<p>The pod is built by a licensed fabricator or integrator against Monotropic drawings: frame and shell, shielding, insulation, cooling, electrical (panelboard, ATS, UPS), fire detection, and the T1 control plane. Pod listing path is UL 2755 (modular data center) so the AHJ can accept it under NEC Article 646. Pod pricing in this data room is incomplete because shell, cooling, ATS, electrical, fire, and OOB lines are RFQ (see <code>02_BOM</code>).</p></article>
+      <p class="contact">Monotropic Studios. Contact <a href="mailto:info@monotropicstudios.com">info@monotropicstudios.com</a>. Not an offer. Not legal advice.</p>
+    </main>
+  </div>
+</body>
+</html>

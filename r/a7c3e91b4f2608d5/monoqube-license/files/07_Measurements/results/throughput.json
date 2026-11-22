@@ -1,0 +1,9 @@
+{
+  "records": 200201,
+  "append_hash_chain_per_s": 220477,
+  "append_every_record_signed_per_s": 26406,
+  "verify_per_s": 232800,
+  "verify_ok": true,
+  "record_bytes_json": 271,
+  "single_core": true
+}

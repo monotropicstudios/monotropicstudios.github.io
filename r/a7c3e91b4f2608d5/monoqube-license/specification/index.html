@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <title>Specification | MonoQube licensing | Monotropic Studios</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../room.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <a class="mark" href="../">MONOQUBE</a>
+    <p class="kicker">Licensing data room</p>
+    <a class="package" href="../monoqube-license-package.zip">Download full package</a>
+  </header>
+  <div class="layout">
+    <nav aria-label="Sections">
+      <a href="../">Overview</a>
+<a href="../engineering/">Engineering</a>
+<a href="../bom/">Bill of materials</a>
+<a href="../specification/" aria-current="page">Specification</a>
+<a href="../licensing/">Licensing</a>
+<a href="../questions/">Questions</a>
+<a href="../pilot/">Pilot</a>
+<a href="../measurements/">Measurements</a>
+    </nav>
+    <main id="content">
+      <article id="01_Spec_Sheet"><h1>Spec Sheet: MonoQube Meter Module MQ-MM-30 (T1) and family</h1>
+<p>Marking: MEASURED (reference model, 22 Nov 2026), CITED (datasheet or public page), DESIGN TARGET (not yet built), ASSUMPTION.</p>
+<h2>MQ-MM-30 Meter Module (controller + power gate, one feeder)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Function</td>
+<td>Meters, gates, and attests power to one compute bay by device identifier; payload independent</td>
+<td>Claims 1, 5, 7 to 12</td>
+</tr>
+<tr>
+<td>Feeder rating</td>
+<td>Up to 30 kW, 3-phase, 208 to 480 VAC</td>
+<td>DESIGN TARGET; contactor LC1D95 AC-1 rating 125 A (CITED, Schneider)</td>
+</tr>
+<tr>
+<td>Metering AFE</td>
+<td>ADE9000, 7 channel, class 0.2 capable</td>
+<td>CITED (ADI datasheet)</td>
+</tr>
+<tr>
+<td>Energy accuracy</td>
+<td>Better than 0.5% of reading, 5% to 120% of rated current</td>
+<td>DESIGN TARGET; model shows 0.17% mean / 0.62% max with 0.2% gain error (MEASURED, model)</td>
+</tr>
+<tr>
+<td>Sampling</td>
+<td>1 kHz power samples, 1 s signed checkpoints, interval records 1 s to 15 min configurable</td>
+<td>DESIGN TARGET; model at 1 kHz uses about 6% of one core (MEASURED)</td>
+</tr>
+<tr>
+<td>Identity</td>
+<td>Bay tag ATECC608B challenge every 60 s; also RFID, EEPROM, or X.509 device credential</td>
+<td>Claim 20; DESIGN TARGET</td>
+</tr>
+<tr>
+<td>Signing</td>
+<td>ECDSA P-384 / SHA-384 inside NXP SE052F (FIPS 140-3, CMVP #5139); ML-DSA-65 dual signing planned</td>
+<td>CITED (NIST CMVP) / DESIGN TARGET</td>
+</tr>
+<tr>
+<td>Record format</td>
+<td>Hash-chained deterministic CBOR, MQ-ATTEST v0.9; JSON export</td>
+<td><code>01_Engineering/02_Protocol_Spec_MQ-ATTEST.md</code></td>
+</tr>
+<tr>
+<td>Tamper evidence</td>
+<td>10,000 / 10,000 edits detected, 0 / 200 false positives; truncation needs witnessed checkpoint</td>
+<td>MEASURED (model)</td>
+</tr>
+<tr>
+<td>Payload visibility</td>
+<td>None. 0 payload bytes in 43,423 record bytes</td>
+<td>MEASURED (model)</td>
+</tr>
+<tr>
+<td>Payload overhead</td>
+<td>0 on payload when meter runs on its own MCU (hardware); 1.21% / 4.59% in software model</td>
+<td>DESIGN / MEASURED (model)</td>
+</tr>
+<tr>
+<td>Gate</td>
+<td>Two series elements: firmware-driven contactor coil + hardware interlock chain (watchdog, tamper, E-stop)</td>
+<td>DESIGN TARGET</td>
+</tr>
+<tr>
+<td>Gate default on fault</td>
+<td>Configurable per AR: hold last state or open; safety interlocks always open</td>
+<td>DESIGN TARGET</td>
+</tr>
+<tr>
+<td>Local storage</td>
+<td>1 Mbit FRAM (ledger head, counters), 128 Mbit flash (about 30 days at 1 s intervals)</td>
+<td>CITED parts; DESIGN TARGET sizing</td>
+</tr>
+<tr>
+<td>Time</td>
+<td>RTC with backup, NTS-authenticated network time, SE monotonic counter</td>
+<td>DESIGN TARGET</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>10/100 Ethernet, mTLS 1.3, REST + MQTT; out-of-band management separate from payload network</td>
+<td>DESIGN TARGET</td>
+</tr>
+<tr>
+<td>Sensors</td>
+<td>4 x temperature, accelerometer (tamper, transport), lid switch</td>
+<td>CITED parts</td>
+</tr>
+<tr>
+<td>Power</td>
+<td>24 VDC DIN-rail PSU, about 3 W controller</td>
+<td>DESIGN TARGET</td>
+</tr>
+<tr>
+<td>Mounting</td>
+<td>DIN rail inside a UL 508A listed panel</td>
+<td>DESIGN TARGET</td>
+</tr>
+<tr>
+<td>Environment</td>
+<td>0 to 55 °C, 5 to 95% RH non-condensing</td>
+<td>DESIGN TARGET</td>
+</tr>
+<tr>
+<td>Compliance targets</td>
+<td>NRTL listing (UL 61010-1 / UL 508A panel), FCC Part 15 Class A, UL 2900-2-2 or IEC 62443-4-2, FIPS 140-3 module inside</td>
+<td>See <code>04_Certifications_and_UL_Path.md</code></td>
+</tr>
+<tr>
+<td>Certification status</td>
+<td>Not yet listed. Certification program planned; dates set from first build</td>
+<td>Status</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Product family</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>SKU</th>
+<th>What</th>
+<th>Target buyer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MQ-MAC-OEM</td>
+<td>Controller board only, licensee supplies switching</td>
+<td>PDU, busway, rack OEMs</td>
+</tr>
+<tr>
+<td>MQ-MM-30</td>
+<td>Controller + contactor + CTs in panel, one feeder</td>
+<td>Retrofit at operators, lender-mandated fleets</td>
+</tr>
+<tr>
+<td>MQ-RACK</td>
+<td>Metered, gated rack with integrated module</td>
+<td>Neoclouds, colo cages</td>
+</tr>
+<tr>
+<td>MQ-POD</td>
+<td>Full modular pod with MonoQube control plane</td>
+<td>Edge, defense, energy sites</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pod design targets (private data room only): 42U IEC 60297 bay, 3 to 30 kW dual-input PDU, UL 1008 ATS, UPS about 15 min, hybrid cooling, EMI shielding above 60 dB, dual-path network plus satellite, under 400 A service (CITED, Technical Volume D26BZ-DV010-0121). Pod listing path is UL 2755 under NEC Article 646.</p></article>
+<article id="02_Integration_Guide"><h1>Integration Guide: API and SDK (v0.9 draft)</h1>
+<h2>1. Interfaces</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Interface</th>
+<th>Where</th>
+<th>Auth</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Device REST</td>
+<td>On module, management port</td>
+<td>mTLS 1.3, client cert issued by site CA</td>
+<td>Status, records, AR install, checkpoints</td>
+</tr>
+<tr>
+<td>Device MQTT</td>
+<td>On module</td>
+<td>mTLS 1.3</td>
+<td>Streaming records to the customer collector</td>
+</tr>
+<tr>
+<td>Authority API</td>
+<td>Customer or MonoQube cloud</td>
+<td>OAuth 2.0 client credentials + mTLS</td>
+<td>Issue, revoke, query authorization records</td>
+</tr>
+<tr>
+<td>Witness API</td>
+<td>MonoQube or third party</td>
+<td>mTLS</td>
+<td>Countersign checkpoints, return receipts</td>
+</tr>
+<tr>
+<td>Vault / Reports API</td>
+<td>MonoQube cloud or on-prem</td>
+<td>OAuth 2.0</td>
+<td>Bundles, usage statements, collateral attestations</td>
+</tr>
+<tr>
+<td>Webhooks</td>
+<td>Customer endpoint</td>
+<td>HMAC-SHA256 signature header</td>
+<td>Events: gate change, fault, tamper, witness gap</td>
+</tr>
+</tbody>
+</table></div>
+<h2>2. Device REST (selected)</h2>
+<pre><code>GET  /v1/status                      -&gt; {pod_id, fw, bays:[{bay, state, device_id, kw}], head:{seq, hash}}
+GET  /v1/records?from_seq=&amp;limit=    -&gt; CBOR or JSON array of records
+GET  /v1/checkpoints/latest          -&gt; {seq, hash, sig, witness_receipt}
+POST /v1/authorizations              &lt;- signed AR (see protocol spec section 5)
+DELETE /v1/authorizations/{ar_id}    &lt;- signed revocation
+GET  /v1/export?from=&amp;to=            -&gt; evidence bundle (.mqb: records + checkpoints + certs + receipts)
+</code></pre>
+<h2>3. Webhook events</h2>
+<pre><code>{&quot;event&quot;:&quot;gate.opened&quot;,&quot;pod&quot;:&quot;POD-0007&quot;,&quot;bay&quot;:3,&quot;device_id&quot;:&quot;DEV-8F2A&quot;,&quot;reason&quot;:&quot;AR_EXPIRED&quot;,&quot;seq&quot;:918223,&quot;ts&quot;:&quot;2027-03-01T08:00:00Z&quot;}
+{&quot;event&quot;:&quot;tamper&quot;,&quot;pod&quot;:&quot;POD-0007&quot;,&quot;source&quot;:&quot;lid&quot;,&quot;seq&quot;:918224}
+{&quot;event&quot;:&quot;witness.gap&quot;,&quot;pod&quot;:&quot;POD-0007&quot;,&quot;last_receipt_seq&quot;:918000,&quot;age_s&quot;:620}
+</code></pre>
+<h2>4. Verifier SDK (Python, matches the reference model)</h2>
+<pre><code class="language-python">from monoqube.verify import load_bundle, verify
+
+bundle = load_bundle(&quot;POD-0007_2027-03.mqb&quot;)
+report = verify(bundle,
+                trust_roots=[&quot;monotropic_root.pem&quot;],
+                require_witness=True)
+print(report.ok, report.first_error)
+print(report.energy_kwh_by_device())   # {&quot;DEV-8F2A&quot;: 10342.7, ...}
+print(report.authorized_hours())       # hours with an AR in force and gate closed
+</code></pre>
+<p>The reference implementation of <code>verify</code> is <code>07_Measurements/src/monoqube_ref.py</code> (function <code>verify</code>). Production SDKs (Python, Go, TypeScript) will ship with test vectors in <code>spec/test-vectors/</code>.</p>
+<h2>5. Sample operating record output</h2>
+<p>See <code>01_Engineering/05_Reference_Implementation.md</code> section 3 and <code>07_Measurements/results/</code>.</p>
+<h2>6. Integration patterns</h2>
+<ol>
+<li><strong>Lender / lessor:</strong> lender holds the authority role or a co-signing role on ARs; receives monthly evidence bundles and a signed collateral attestation (devices present, hours powered, energy, faults). Gate-open on default only per the credit agreement and applicable law.</li>
+<li><strong>Operator billing:</strong> records feed metered billing per device and per tenant; customers verify their own bills with the SDK.</li>
+<li><strong>OEM PDU:</strong> licensee embeds MQ-MAC-OEM, drives its own relays through the gate interface, exposes MonoQube endpoints next to its existing SNMP/Redfish.</li>
+<li><strong>Regulated AI operator:</strong> records feed log retention (EU AI Act Article 12) as tamper-evident infrastructure logs; the record carries no model or data content.</li>
+</ol></article>
+<article id="03_Test_and_Validation_Plan"><h1>Test and Validation Plan</h1>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Test</th>
+<th>Method</th>
+<th>Pass criterion</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V1</td>
+<td>Ledger tamper detection</td>
+<td>10 attack classes x 1,000 trials on the reference model</td>
+<td>100% detected</td>
+<td>PASS (MEASURED, model)</td>
+</tr>
+<tr>
+<td>V2</td>
+<td>Truncation</td>
+<td>Drop tail records with and without witnessed checkpoint</td>
+<td>100% with witness</td>
+<td>PASS with witness; 0% without (by design, witness mandatory)</td>
+</tr>
+<tr>
+<td>V3</td>
+<td>False positives</td>
+<td>200 clean ledgers</td>
+<td>0</td>
+<td>PASS (MEASURED, model)</td>
+</tr>
+<tr>
+<td>V4</td>
+<td>Payload exposure</td>
+<td>Canary scan of all record bytes</td>
+<td>0 payload bytes</td>
+<td>PASS (MEASURED, model)</td>
+</tr>
+<tr>
+<td>V5</td>
+<td>Payload overhead</td>
+<td>Payload benchmark with meter on and off</td>
+<td>Under 2% on separate core</td>
+<td>PASS 1.21% (model); hardware target 0%</td>
+</tr>
+<tr>
+<td>V6</td>
+<td>Energy accuracy, hardware</td>
+<td>Reference power standard, 5 / 10 / 50 / 100 / 120% current, PF 1, 0.5L, 0.8C, 3 temperatures</td>
+<td>Within 0.5% of reading</td>
+<td>NOT STARTED (needs first build)</td>
+</tr>
+<tr>
+<td>V7</td>
+<td>Gate function</td>
+<td>10,000 open/close cycles under load; interlock open with firmware hung</td>
+<td>Contactor opens within 100 ms of interlock</td>
+<td>NOT STARTED</td>
+</tr>
+<tr>
+<td>V8</td>
+<td>Identity</td>
+<td>Swap tag, clone attempt, replay of old challenge</td>
+<td>Gate opens and record logs mismatch</td>
+<td>NOT STARTED (model logic PASS)</td>
+</tr>
+<tr>
+<td>V9</td>
+<td>CT bypass</td>
+<td>Shunt one CT, neutral imbalance check</td>
+<td>Fault record within 2 s</td>
+<td>NOT STARTED</td>
+</tr>
+<tr>
+<td>V10</td>
+<td>Power loss</td>
+<td>Pull power at random points 1,000 times</td>
+<td>No ledger corruption; chain continuous</td>
+<td>NOT STARTED</td>
+</tr>
+<tr>
+<td>V11</td>
+<td>Time attacks</td>
+<td>RTC rollback, NTS spoof</td>
+<td>Record flags; monotonic counter holds</td>
+<td>NOT STARTED</td>
+</tr>
+<tr>
+<td>V12</td>
+<td>EMC pre-compliance</td>
+<td>Pre-scan for FCC Part 15 Class A</td>
+<td>Margin above 6 dB</td>
+<td>NOT STARTED</td>
+</tr>
+<tr>
+<td>V13</td>
+<td>Safety</td>
+<td>Dielectric, creepage, temperature rise per UL 61010-1</td>
+<td>Per standard</td>
+<td>NOT STARTED (NRTL)</td>
+</tr>
+<tr>
+<td>V14</td>
+<td>Penetration test</td>
+<td>Third-party test of firmware, REST, update path</td>
+<td>No high or critical open</td>
+<td>NOT STARTED</td>
+</tr>
+<tr>
+<td>V15</td>
+<td>Pilot acceptance</td>
+<td>Field SAT per pilot site</td>
+<td>See pilot success metrics</td>
+<td>NOT STARTED</td>
+</tr>
+<tr>
+<td>V16</td>
+<td>Interop</td>
+<td>Two independent verifiers (Python, Go) agree on 1,000 bundles</td>
+<td>100% agreement</td>
+<td>NOT STARTED</td>
+</tr>
+</tbody>
+</table></div>
+<p>Reproduce V1 to V5: <code>07_Measurements/run_all.sh</code>.</p></article>
+<article id="04_Certifications_and_UL_Path"><h1>Certifications and UL Path</h1>
+<p><strong>Status today:</strong> no MonoQube product is listed or certified. Nothing has been submitted to a lab. The cryptographic module chosen for production signing (NXP SE052F) already holds FIPS 140-3 validation (NIST CMVP certificate #5139).</p>
+<h2>1. Standards matrix</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Standard</th>
+<th>Applies to</th>
+<th>Why</th>
+<th>Required or optional</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Product safety (US/Canada)</td>
+<td>UL 61010-1 / CSA C22.2 No. 61010-1 (measurement and control equipment)</td>
+<td>MQ-MAC controller</td>
+<td>Metering and control device on mains; closest fit for a meter-controller</td>
+<td>Required for listing</td>
+</tr>
+<tr>
+<td>Alternative</td>
+<td>UL 62368-1 (ICT equipment)</td>
+<td>MQ-RACK if sold as IT equipment</td>
+<td>Fits when the module ships inside IT gear</td>
+<td>Choose one with the NRTL</td>
+</tr>
+<tr>
+<td>Panel</td>
+<td>UL 508A (industrial control panels)</td>
+<td>MQ-MM-30 assembly</td>
+<td>Panel shop label is what an AHJ inspects</td>
+<td>Required (built by listed panel shop)</td>
+</tr>
+<tr>
+<td>Switching</td>
+<td>UL 60947-4-1</td>
+<td>Contactor</td>
+<td>Already listed by its maker (Schneider)</td>
+<td>Inherited</td>
+</tr>
+<tr>
+<td>Modular data center</td>
+<td>UL 2755 (Ed. 3-2026) under NEC Article 646</td>
+<td>MQ-POD</td>
+<td>NEC 646.4 accepts a listed MDC instead of a full field evaluation (<a href="https://www.ul.com/services/prefabricated-modular-data-center-testing-and-certification">UL Solutions</a>; <a href="https://webstore.ansi.org/standards/ul/ul2755ed2026">ANSI webstore</a>)</td>
+<td>Required for pod</td>
+</tr>
+<tr>
+<td>Transfer switch</td>
+<td>UL 1008</td>
+<td>Pod ATS</td>
+<td>Buy a listed ATS</td>
+<td>Inherited</td>
+</tr>
+<tr>
+<td>EMC (US)</td>
+<td>FCC Part 15 Subpart B, Class A</td>
+<td>All SKUs</td>
+<td>Unintentional radiator</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>EMC / safety (EU, UK)</td>
+<td>CE / UKCA: EN 61010-1, EN 55032, EN 55035, RED if wireless</td>
+<td>All SKUs for EU</td>
+<td>Market access</td>
+<td>Required for EU sales</td>
+</tr>
+<tr>
+<td>Cyber (product)</td>
+<td>UL 2900-1 / 2900-2-2 (industrial control) or IEC 62443-4-2 with 62443-4-1 process</td>
+<td>Firmware and interfaces</td>
+<td>Enterprise and utility security review shortcut</td>
+<td>Strongly recommended</td>
+</tr>
+<tr>
+<td>Crypto</td>
+<td>FIPS 140-3</td>
+<td>Signing module</td>
+<td>Federal buyers and lenders' security teams ask</td>
+<td>Met by SE052F (CMVP #5139); product states "uses a FIPS 140-3 validated module"</td>
+</tr>
+<tr>
+<td>Cloud service</td>
+<td>SOC 2 Type I, then Type II</td>
+<td>Authority, witness, vault, reports</td>
+<td>Enterprise procurement</td>
+<td>Required for the hosted service</td>
+</tr>
+<tr>
+<td>Metrology (optional)</td>
+<td>ANSI C12.20 accuracy class 0.5 or IEC 62053-22</td>
+<td>Meter function</td>
+<td>Lets records stand as billing-grade evidence</td>
+<td>Optional; decide with first lender pilot</td>
+</tr>
+<tr>
+<td>Defense (optional)</td>
+<td>MIL-STD-461 / 810, NIST SP 800-171</td>
+<td>Defense SKU and company</td>
+<td>Only for DoD work</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Export</td>
+<td>EAR Category 5 Part 2 (encryption) classification</td>
+<td>Firmware</td>
+<td>Crypto in product; likely mass-market or 5A992 path</td>
+<td>Counsel to confirm</td>
+</tr>
+</tbody>
+</table></div>
+<h2>2. NRTL options (none contacted)</h2>
+<p>All of these appear on OSHA's NRTL list (<a href="https://www.osha.gov/nationally-recognized-testing-laboratory-program/current-list-of-nrtls">OSHA</a>): UL Solutions, Intertek (ETL mark), CSA Group, TÜV Rheinland, TÜV SÜD, Bureau Veritas. AHJs accept any NRTL mark for the same standard.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Strength</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UL Solutions</td>
+<td>Highest AHJ recognition; owns UL 2755 and UL 2900</td>
+<td>Typically priced above ETL (see below)</td>
+</tr>
+<tr>
+<td>Intertek (ETL)</td>
+<td>Usually faster and lower cost; published rate card</td>
+<td><a href="https://www.intertek.se/siteassets/business-lines/electrical/etl-certification-process/etl-certification-rates-2025_general-information.pdf">Intertek ETL rates 2025 PDF</a></td>
+</tr>
+<tr>
+<td>TÜV Rheinland / TÜV SÜD</td>
+<td>One project for US (NRTL) and EU (CB scheme, CE)</td>
+<td>Good if EU sales start early</td>
+</tr>
+<tr>
+<td>CSA Group</td>
+<td>Strong in Canada and industrial controls</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2>3. Cost and timeline (cited third-party estimates; real numbers need quotes)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Cited cost</th>
+<th>Cited time</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UL 508A industrial control panel testing</td>
+<td>$8,000 to $25,000</td>
+<td>6 to 12 weeks</td>
+<td><a href="https://lanpdt.com/why-your-business-needs-flawless-product-development-and-design/">lanpdt</a></td>
+</tr>
+<tr>
+<td>UL 508A panel shop program, first year</td>
+<td>about $7,000 to $18,000</td>
+<td></td>
+<td><a href="https://www.merobix.com/blog/ul-508a-certification-cost-guide">merobix</a></td>
+</tr>
+<tr>
+<td>FCC Part 15B</td>
+<td>$3,000 to $7,000</td>
+<td>2 to 3 weeks</td>
+<td><a href="https://lanpdt.com/why-your-business-needs-flawless-product-development-and-design/">lanpdt</a></td>
+</tr>
+<tr>
+<td>FCC Part 15B (other quotes)</td>
+<td>$1,500 to $5,000</td>
+<td>1 to 4 weeks</td>
+<td><a href="https://www.anamor.xyz/blog/us-tests-and-certifications-for-electronic-products/">anamor</a></td>
+</tr>
+<tr>
+<td>NRTL annual upkeep, UL vs ETL</td>
+<td>$15,000 to $30,000 vs $10,000 to $22,000</td>
+<td>yearly</td>
+<td><a href="https://markready.io/compare/ul-vs-etl">markready</a></td>
+</tr>
+<tr>
+<td>UL file maintenance minimum</td>
+<td>$1,170 per year</td>
+<td></td>
+<td><a href="https://markready.io/guides/ul-certification">markready</a></td>
+</tr>
+<tr>
+<td>UL 2900 / IEC 62443 cyber evaluation</td>
+<td>No public price found</td>
+<td>months</td>
+<td>Quote required</td>
+</tr>
+<tr>
+<td>SOC 2 Type I then Type II</td>
+<td>No cited figure collected</td>
+<td>Type II needs a 3 to 12 month observation window (ASSUMPTION, common practice)</td>
+<td>Quote required</td>
+</tr>
+</tbody>
+</table></div>
+<h2>4. Program plan and budget</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Step</th>
+<th>When (from first build, ASSUMPTION)</th>
+<th>Budget (ASSUMPTION built from rows above)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pre-compliance EMC and safety review</td>
+<td>Weeks 0 to 4</td>
+<td>$8,000</td>
+</tr>
+<tr>
+<td>Pilot units: NRTL field evaluation per site (lets pilots run before listing)</td>
+<td>Weeks 2 to 8</td>
+<td>$5,000 per site</td>
+</tr>
+<tr>
+<td>Safety listing (UL 61010-1, ETL or UL)</td>
+<td>Weeks 4 to 20</td>
+<td>$45,000 to $90,000</td>
+</tr>
+<tr>
+<td>UL 508A panel via listed panel shop</td>
+<td>Weeks 4 to 16</td>
+<td>$8,000 to $25,000</td>
+</tr>
+<tr>
+<td>FCC Part 15 Class A</td>
+<td>Weeks 4 to 8</td>
+<td>$3,000 to $7,000</td>
+</tr>
+<tr>
+<td>Cyber (UL 2900-2-2 or IEC 62443-4-2) + pen test</td>
+<td>Weeks 8 to 28</td>
+<td>$40,000 (quote required)</td>
+</tr>
+<tr>
+<td>SOC 2 Type I</td>
+<td>Months 3 to 6</td>
+<td>$15,000 (quote required)</td>
+</tr>
+<tr>
+<td>Total one-time</td>
+<td>about 7 months</td>
+<td>about $150,000 (used in unit economics)</td>
+</tr>
+<tr>
+<td>Annual upkeep</td>
+<td>yearly</td>
+<td>about $22,000 (top of cited ETL range)</td>
+</tr>
+</tbody>
+</table></div>
+<h2>5. Site status statement (approved wording draft)</h2>
+<blockquote>
+<p><strong>Certification:</strong> Not yet listed. The certification program is planned with a Nationally Recognized Testing Laboratory for product safety, FCC Class A emissions, and cybersecurity. Production signing uses a FIPS 140-3 validated security module. Target dates are set from first build.</p>
+</blockquote>
+<p>Once a lab is engaged, replace the last sentence with: "Testing in progress with [lab]. Target listing [month year]." Do not show a mark or say "UL listed" until the certificate is issued.</p></article>
+      <p class="contact">Monotropic Studios. Contact <a href="mailto:info@monotropicstudios.com">info@monotropicstudios.com</a>. Not an offer. Not legal advice.</p>
+    </main>
+  </div>
+</body>
+</html>

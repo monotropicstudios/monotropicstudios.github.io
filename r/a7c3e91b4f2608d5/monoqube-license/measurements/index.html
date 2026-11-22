@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <title>Measurements | MonoQube licensing | Monotropic Studios</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../room.css">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <a class="mark" href="../">MONOQUBE</a>
+    <p class="kicker">Licensing data room</p>
+    <a class="package" href="../monoqube-license-package.zip">Download full package</a>
+  </header>
+  <div class="layout">
+    <nav aria-label="Sections">
+      <a href="../">Overview</a>
+<a href="../engineering/">Engineering</a>
+<a href="../bom/">Bill of materials</a>
+<a href="../specification/">Specification</a>
+<a href="../licensing/">Licensing</a>
+<a href="../questions/">Questions</a>
+<a href="../pilot/">Pilot</a>
+<a href="../measurements/" aria-current="page">Measurements</a>
+    </nav>
+    <main id="content">
+      <article id="README"><h1>MonoQube MVP metrics: reference prototype and benchmarks</h1>
+<p>Run date: 2026-11-22 (PST). Box: Intel Xeon, 8 vCPU, Linux 6.12, Python 3.13.5, cryptography 43.0.0. Seed 20261122.<br />
+Reproduce: <code>./run_all.sh</code> (about 6 minutes). Raw output: <code>results/*.json</code>.</p>
+<h2>What the prototype is</h2>
+<p><code>src/monoqube_ref.py</code> is a software reference model of the runtime metering and attestation path in PCT/US26/39996:<br />
+identifier read from a tag reader outside the device, controller-held authorization record, power gate closed only when<br />
+authorized, pod-side power measurement, envelope cut-off, a SHA-256 hash-chained operating record, and Ed25519-signed<br />
+checkpoints an external verifier can check with only the public key.</p>
+<p>It is NOT the production hardware. The controller runs as a separate OS process instead of a separate MCU, and the<br />
+power sensor is modeled (Gaussian noise as a fraction of reading, optional gain error, 16-bit quantization). In the<br />
+overhead test the "sensor" reads the payload process's CPU counters from /proc (OS side, the payload never writes to it)<br />
+and converts them to watts with a fixed model. Real-sensor accuracy needs the first hardware build.</p>
+<h2>Tests (src/bench.py, src/bench_extra.py)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Result file</th>
+<th>What it measures</th>
+<th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>crypto.json</td>
+<td>Ed25519 sign and verify time</td>
+<td>20,000 sign+verify of 32-byte digests, per-op perf_counter_ns, p50/p99</td>
+</tr>
+<tr>
+<td>throughput.json</td>
+<td>Record append and verify rate, single core</td>
+<td>200,000 meter records, signed checkpoint every 1,000; separate 50,000-record run signing every record; full-chain verify</td>
+</tr>
+<tr>
+<td>tamper.json</td>
+<td>Tamper detection</td>
+<td>2,000-window ledger, signed checkpoint every 100 windows. 12 fault types x 1,000 trials. Attacker can rewrite storage and recompute the SHA-256 chain but lacks the pod key. Plus 200 clean ledgers for false positives</td>
+</tr>
+<tr>
+<td>accuracy.json</td>
+<td>Metered energy vs ground truth</td>
+<td>200 sessions x 60 s at 1 kHz. Load = random steps 200 to 6,000 W plus sine ripple, exact integral computed analytically. Modeled sensor 0.5% noise of reading, 16-bit ADC, 1 s windows</td>
+</tr>
+<tr>
+<td>accuracy_with_gain_error.json</td>
+<td>Same, adding per-session calibration gain error (sd 0.2%)</td>
+<td>100 sessions. Shows calibration dominates error</td>
+</tr>
+<tr>
+<td>overhead.json</td>
+<td>Payload latency overhead and meter CPU</td>
+<td>Payload: SHA-256 + SHA3-256 over 32 MB per iteration, pinned to one core. Meter at 1 kHz sampling, 1 Hz signed checkpoints, pinned to another core (or the same core, worst case). 6 interleaved rounds, 78 timed iterations per condition, medians</td>
+</tr>
+<tr>
+<td>overhead_extra.json</td>
+<td>Noise floor and 60 s exposure scan</td>
+<td>Baseline vs baseline on the same harness; 62 s metered run, ledger scanned for the 32-byte canary planted in payload data</td>
+</tr>
+</tbody>
+</table></div></article>
+<h2>Source and results</h2><ul class="downloads"><li><a href="../files/07_Measurements/results/accuracy.json">07_Measurements/results/accuracy.json</a></li>
+<li><a href="../files/07_Measurements/results/accuracy_with_gain_error.json">07_Measurements/results/accuracy_with_gain_error.json</a></li>
+<li><a href="../files/07_Measurements/results/crypto.json">07_Measurements/results/crypto.json</a></li>
+<li><a href="../files/07_Measurements/results/env.json">07_Measurements/results/env.json</a></li>
+<li><a href="../files/07_Measurements/results/overhead.json">07_Measurements/results/overhead.json</a></li>
+<li><a href="../files/07_Measurements/results/overhead_extra.json">07_Measurements/results/overhead_extra.json</a></li>
+<li><a href="../files/07_Measurements/results/overhead_ledger.json">07_Measurements/results/overhead_ledger.json</a></li>
+<li><a href="../files/07_Measurements/results/run_log.txt">07_Measurements/results/run_log.txt</a></li>
+<li><a href="../files/07_Measurements/results/tamper.json">07_Measurements/results/tamper.json</a></li>
+<li><a href="../files/07_Measurements/results/throughput.json">07_Measurements/results/throughput.json</a></li>
+<li><a href="../files/07_Measurements/run_all.sh">07_Measurements/run_all.sh</a></li>
+<li><a href="../files/07_Measurements/src/bench.py">07_Measurements/src/bench.py</a></li>
+<li><a href="../files/07_Measurements/src/bench_extra.py">07_Measurements/src/bench_extra.py</a></li>
+<li><a href="../files/07_Measurements/src/monoqube_ref.py">07_Measurements/src/monoqube_ref.py</a></li></ul>
+      <p class="contact">Monotropic Studios. Contact <a href="mailto:info@monotropicstudios.com">info@monotropicstudios.com</a>. Not an offer. Not legal advice.</p>
+    </main>
+  </div>
+</body>
+</html>
