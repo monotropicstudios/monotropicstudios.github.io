@@ -4,8 +4,8 @@
   const context = canvas.getContext("2d", { alpha: false });
   if (!context) return;
 
-  // More buckets so the inward luminosity pulse transitions never band or step.
-  const bucketCount = 16;
+  // More buckets so the center fade and the inward pulse never band or step.
+  const bucketCount = 32;
   const buckets = Array.from({ length: bucketCount }, function () {
     return [];
   });
@@ -68,6 +68,53 @@
 
   function masks() {
     return [];
+  }
+
+  function inflate(rect, pad) {
+    return {
+      left: rect.left - pad,
+      top: rect.top - pad,
+      right: rect.right + pad,
+      bottom: rect.bottom + pad,
+      width: rect.width + pad * 2,
+      height: rect.height + pad * 2,
+    };
+  }
+
+  function inquiryRegions() {
+    if (document.body.dataset.view !== "inquiry") return [];
+    const nodes = [
+      document.querySelector(".work-list"),
+      document.querySelector("label[for='details']"),
+      document.getElementById("details"),
+      document.getElementById("submit"),
+    ];
+    const list = [];
+    for (let i = 0; i < nodes.length; i++) {
+      const rect = elementRect(nodes[i]);
+      if (rect) list.push(inflate(rect, 8));
+    }
+    return list;
+  }
+
+  // Soft dim over the inquiry box and its text. Never a hard edge.
+  function contentCalm(x, y, regions) {
+    if (!regions.length) return 1;
+    const feather = 78;
+    const floor = 0.12;
+    let calm = 1;
+    for (let i = 0; i < regions.length; i++) {
+      const rect = regions[i];
+      const dx = Math.max(rect.left - x, 0, x - rect.right);
+      const dy = Math.max(rect.top - y, 0, y - rect.bottom);
+      const outside = Math.hypot(dx, dy);
+      if (outside >= feather) continue;
+      const u = outside / feather;
+      const eased = u * u * (3 - 2 * u);
+      const local = floor + (1 - floor) * eased;
+      if (local < calm) calm = local;
+    }
+    return calm;
   }
 
   function unionRect(a, b) {
@@ -169,7 +216,9 @@
     const focusY = aimY + state.offsetY + breathe;
     const col = collimation(now);
     const regions = masks();
+    const quiet = inquiryRegions();
     const pairs = pairCount(width);
+    const dissolveReach = Math.max(84, width * 0.15);
     const step = width < 700 ? 8 : 6;
     const pulse = 0.5 + 0.5 * Math.sin(now * 0.00055);
 
@@ -217,9 +266,16 @@
             const inward = Math.sin(proximity * Math.PI * 0.92 - now * 0.00048 + phase * 0.2);
             const pulseLift = 0.55 + 0.45 * ((inward + 1) * 0.5) * (0.65 + 0.35 * pulse);
             const base = 0.34 + 0.46 * Math.pow(Math.max(0, 1 - dist), 1.15);
-            const alpha = base * along * keep * pulseLift + mag.glow * keep;
+            const midX = (prevX + x) * 0.5;
+            const toward = clamp(Math.abs(midX - centerX) / dissolveReach, 0, 1);
+            const dissolve = toward * toward * (3 - 2 * toward);
+            const quieten = Math.min(
+              contentCalm(prevX, prevDrawY, quiet),
+              contentCalm(x, drawY, quiet)
+            );
+            const alpha = (base * along * keep * pulseLift + mag.glow * keep) * dissolve * quieten;
             const capped = Math.min(alpha, 0.86);
-            if (capped > 0.05) {
+            if (capped > 0.012) {
               const index = Math.min(bucketCount - 1, Math.floor((capped / 0.86) * bucketCount));
               buckets[index].push(prevX, prevDrawY, x, drawY);
             }
