@@ -55,7 +55,7 @@
       <header class="hero">
         <h1 class="mark">MONOQUBE</h1>
         <p class="lede">The sovereign compute vessel for the edge.</p>
-        <p class="patent">Patent pending (PCT/US 63/906,799).</p>
+        <p class="patent">Patent pending: PCT/US26/39996, claiming priority to US provisional applications 63/857,478 and 63/906,799.</p>
         <a class="studio" href="https://monotropicstudios.com/">A Monotropic Studios invention</a>
       </header>
     </div>
@@ -70,7 +70,6 @@
       <section aria-labelledby="measure">
         <h2 id="measure">Measure</h2>
         <dl>
-          <div class="fact"><dt>Footprint</dt><dd>12 ft by 8 ft. Ground, rooftop, or marine deck. One vehicle. A level pad. Crane or forklift access.</dd></div>
           <div class="fact"><dt>Power</dt><dd>Three-phase. Voltage and amperage vary by SKU. UPS is supported.</dd></div>
           <div class="fact"><dt>Network</dt><dd>10GbE uplink minimum. 100GbE for GPU clusters. A separate out-of-band network.</dd></div>
           <div class="fact"><dt>Thermal</dt><dd>Self-contained cooling. Ambient range -20 C to 50 C.</dd></div>
@@ -110,6 +109,61 @@
         <h2 id="places">Where it runs</h2>
         <p>Defense and national security. Telecom at the cell hub. Hospitals and research that keep data on site. Markets, venues, grids, agriculture, and environmental monitoring.</p>
         <p class="note">Air-gapped control is supported. Scheduling can be Kubernetes-native. Provisioning can speak Terraform.</p>
+      </section>
+
+      <section aria-labelledby="mvp">
+        <h2 id="mvp">What the MVP shows</h2>
+        <p>This is a software reference model on a server, with a simulated sensor. It is not the production unit. We built a working reference prototype of the MonoQube runtime metering and attestation layer described in PCT/US26/39996 and tested it. Every number here was measured on November 22, 2026, or comes from a public source linked below.</p>
+        <p>The meter never touches the workload. In a 62 second metered run, 0 bytes of the payload's data showed up in the operating record. We planted a secret in the workload's data and scanned the record for it. It never appeared.</p>
+        <p>The record can't be quietly changed. We attacked it 10,000 times across ten methods: editing values, deleting, inserting, reordering, replaying, backdating, and forging signatures, including an attacker who rebuilds the whole hash chain. All 10,000 were caught. Clean records raised 0 false alarms in 200 checks. Rolling the record back to an earlier checkpoint is caught every time the auditor keeps the last checkpoint it received, which is how the system is meant to run.</p>
+        <p>It costs the workload almost nothing. With the meter on its own core, the workload ran 1.2% slower at the median. With the meter forced onto the same core, it ran 4.6% slower. The meter used about 6% of one core while sampling 1,000 times a second and signing once a second.</p>
+        <p>Signing keeps up with the meter. Each record is signed in 31 microseconds and verified in 86 microseconds (median). One core writes 220,000 records a second and checks 230,000 a second.</p>
+        <p>The math is right. Against exact ground truth, metered energy was off by 0.002% on average across 200 one-minute sessions with a modeled 0.5% sensor. With calibration error added, error stayed under 0.62% in every session. Those energy figures show the metering math, not a physical sensor.</p>
+        <table>
+          <caption>Measured on the software reference model, November 22, 2026. Simulated sensor. Not the production unit.</caption>
+          <tbody>
+            <tr><th scope="row">Payload data exposed in the record</th><td>0 bytes</td></tr>
+            <tr><th scope="row">Tamper attempts detected</th><td>10,000 of 10,000</td></tr>
+            <tr><th scope="row">False alarms on clean records</th><td>0 of 200</td></tr>
+            <tr><th scope="row">Workload slowdown, meter on its own core / same core</th><td>1.2% / 4.6%</td></tr>
+            <tr><th scope="row">Meter CPU at 1,000 samples per second</th><td>about 6% of one core</td></tr>
+            <tr><th scope="row">Sign / verify time (median)</th><td>31 µs / 86 µs</td></tr>
+            <tr><th scope="row">Records written / verified per second, one core</th><td>220,477 / 232,800</td></tr>
+            <tr><th scope="row">Energy error vs ground truth (mean, modeled 0.5% sensor)</th><td>0.002%</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section aria-labelledby="auditors">
+        <h2 id="auditors">What auditors get</h2>
+        <p>A plain JSON operating record. Each entry carries the pod, a sequence number, the bay, the device identity read from its tag, the authorization state, the power gate state, measured energy and peak power for the window, and a link to the entry before it. Signed checkpoints let anyone with the public key verify the full history without trusting the pod's storage or the hosted machine.</p>
+        <pre>{&quot;pod&quot;:&quot;POD-REF-1&quot;,&quot;seq&quot;:1,&quot;type&quot;:&quot;meter&quot;,&quot;bay&quot;:1,&quot;device&quot;:&quot;DEV-A&quot;,&quot;energy_mj&quot;:174705,&quot;peak_mw&quot;:403748,&quot;n&quot;:1001,&quot;prev&quot;:&quot;e839...d902&quot;,&quot;hash&quot;:&quot;3a32...3f96&quot;}
+{&quot;pod&quot;:&quot;POD-REF-1&quot;,&quot;seq&quot;:2,&quot;type&quot;:&quot;checkpoint&quot;,&quot;count&quot;:2,&quot;hash&quot;:&quot;fb20...5f5c&quot;,&quot;sig&quot;:&quot;adb2...df07&quot;}</pre>
+      </section>
+
+      <section aria-labelledby="tested">
+        <h2 id="tested">How we tested</h2>
+        <p>The prototype runs the controller logic as a separate process from the workload, reads device identity from a tag reader the device can't write to, gates power on an authorization record the device can't change, and signs the record with Ed25519. The workload was SHA-256 and SHA3-256 over 32 MB, pinned to one core, timed over 78 runs per condition. Tamper tests ran 1,000 trials per attack type. Accuracy compared metered energy to the exact integral of a known load. This is a software reference model, not the production unit, and the sensor in the accuracy test is modeled. Physical sensor accuracy will be measured on the first hardware build. The code and raw results reproduce in about six minutes.</p>
+      </section>
+
+      <section aria-labelledby="market">
+        <h2 id="market">The market</h2>
+        <ul class="sources">
+          <li>U.S. data centers used 176 TWh in 2023, 4.4% of all U.S. electricity, and are projected to reach 325 to 580 TWh by 2028, 6.7% to 12% of the total. Lawrence Berkeley National Laboratory, 2024 United States Data Center Energy Usage Report, December 2024. <a href="https://eta-publications.lbl.gov/sites/default/files/2024-12/lbnl-2024-united-states-data-center-energy-usage-report.pdf">Report</a></li>
+          <li>The global modular data center market was $29.04 billion in 2024 and is forecast to reach $75.77 billion by 2030 (17.4% CAGR). Grand View Research. <a href="https://www.grandviewresearch.com/industry-analysis/modular-data-center-market-report">Report</a></li>
+          <li>There are 6,100 hospitals in the United States. American Hospital Association, Fast Facts on U.S. Hospitals 2026. <a href="https://www.aha.org/statistics/fast-facts-us-hospitals">Fast facts</a></li>
+          <li>326 U.S. universities hold R1 or R2 research status (187 R1, 139 R2). Carnegie Classifications, 2025 Research Activity Designations. <a href="https://carnegieclassifications.acenet.edu/news/carnegie-classifications-release-2025-research-activity-designations-debut-updated-methodology/">Designations</a></li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="pilot">
+        <h2 id="pilot">Pilot program</h2>
+        <p>We are opening three design-partner pilots: up to 10 feeders at one site for 90 days, hardware on loan. Each pilot is judged on seven measured results, including energy within 0.5% of the site's revenue meter, every record verified by the customer's own tools, zero workload data in the record, and zero interruptions caused by MonoQube. No pilot is live today.</p>
+      </section>
+
+      <section aria-labelledby="cert">
+        <h2 id="cert">Certification status</h2>
+        <p>Not yet listed. Certification program planned with a Nationally Recognized Testing Laboratory for product safety, FCC Class A emissions, and cybersecurity. Production signing uses a FIPS 140-3 validated security module. Target dates are set from first build.</p>
       </section>
 
       <section class="inquiry" aria-labelledby="ask">

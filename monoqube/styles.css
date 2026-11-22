@@ -124,7 +124,57 @@ dt {
 }
 
 .sheet {
+  width: min(100%, 42rem);
   padding-bottom: max(4rem, calc(env(safe-area-inset-bottom) + 2.5rem));
+}
+
+table {
+  width: 100%;
+  margin: 1.25rem 0 0;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+caption {
+  margin-bottom: 0.75rem;
+  text-align: left;
+  color: #8d8d88;
+  font-size: 0.85rem;
+}
+
+th,
+td {
+  padding: 0.65rem 0;
+  border-top: 1px solid #2a2a28;
+  vertical-align: top;
+  text-align: left;
+  font-weight: 300;
+}
+
+th {
+  width: 62%;
+  padding-right: 1rem;
+  color: #c8c6c0;
+}
+
+.sources li {
+  margin: 0 0 0.9rem;
+}
+
+.sources a {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+pre {
+  margin: 0.4rem 0 0;
+  padding: 0;
+  overflow: auto;
+  color: #c8c6c0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 section {
