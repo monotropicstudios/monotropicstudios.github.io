@@ -137,7 +137,7 @@
       <p class="blurb">Teddy is a struggling Hollywood actor whose career stalled after losing the love of his life. To honor him, Teddy, who has never worn a wig in his life, books a drag set under Luis's old stage name, on the same night as his biggest audition in years.</p>
 
       <section class="player" aria-label="Audiobook">
-        <audio id="audio" controls preload="metadata" playsinline src="/witness-me/audio/00.mp3?v=3"></audio>
+        <audio id="audio" controls preload="metadata" playsinline src="/r/587aa8de1de0ba31/witness-me/audio/01.mp3?v=6"></audio>
         <p class="now" id="now"></p>
         <div id="custom-controls" hidden>
         <div class="bar">
@@ -154,12 +154,13 @@
         </div>
         </div>
         <p id="message" class="message" role="status"></p>
-        <noscript><p>Use the player for the opening credits and Chapter 1.</p></noscript>
+        <noscript><p>Use the player for the chapters. Download the audiobook below for the whole book.</p></noscript>
         <ol class="chapters" id="chapters"></ol>
       </section>
 
       <div class="links">
-        <a href="/witness-me/witness-me-chapters-1-6.pdf" target="_blank" rel="noopener">Read Chapters 1-6<small>PDF</small></a>
+        <a href="/witness-me/audio/witness-me-audiobook.m4b?v=6" download>Download audiobook<small>340 MB</small></a>
+        <a href="/witness-me/witness-me.pdf" target="_blank" rel="noopener">Read the book<small>PDF</small></a>
       </div>
 
       <section class="offer">
@@ -203,7 +204,12 @@
     </main>
     <script src="/field.js?v=17"></script>
     <script src="/site.js?v=16"></script>
-    <script id="book-data" type="application/json">{"id": "witness-me", "title": "Witness Me", "author": "Monotropic Studios", "cover": "/witness-me/cover.jpg?v=2", "chapters": [{"title": "Opening credits", "src": "/witness-me/audio/00.mp3?v=3", "duration": 7}, {"title": "Chapter 1", "src": "/witness-me/audio/01.mp3?v=6", "duration": 789}]}</script>
+    <script id="book-data" type="application/json">{"id": "witness-me", "title": "Witness Me", "author": "Monotropic Studios", "cover": "/witness-me/cover.jpg?v=2", "chapters": [{"title": "Chapter 1", "src": "/r/587aa8de1de0ba31/witness-me/audio/01.mp3?v=6", "duration": 789}, {"title": "Chapter 2", "src": "/r/587aa8de1de0ba31/witness-me/audio/02.mp3?v=6", "duration": 1667}, {"title": "Chapter 3", "src": "/r/587aa8de1de0ba31/witness-me/audio/03.mp3?v=6", "duration": 1839}, {"title": "Chapter 4", "src": "/r/587aa8de1de0ba31/witness-me/audio/04.mp3?v=6", "duration": 1639}, {"title": "Chapter 5", "src": "/r/587aa8de1de0ba31/witness-me/audio/05.mp3?v=6", "duration": 1896}, {"title": "Chapter 6", "src": "/r/587aa8de1de0ba31/witness-me/audio/06.mp3?v=6", "duration": 1019}, {"title": "Chapter 7", "src": "/r/587aa8de1de0ba31/witness-me/audio/07.mp3?v=6", "duration": 1143}, {"title": "Chapter 8", "src": "/r/587aa8de1de0ba31/witness-me/audio/08.mp3?v=6", "duration": 1638}, {"title": "Chapter 9", "src": "/r/587aa8de1de0ba31/witness-me/audio/09.mp3?v=6", "duration": 1796}, {"title": "Chapter 10", "src": "/r/587aa8de1de0ba31/witness-me/audio/10.mp3?v=6", "duration": 1620}, {"title": "Chapter 11", "src": "/r/587aa8de1de0ba31/witness-me/audio/11.mp3?v=6", "duration": 938}, {"title": "Chapter 12", "src": "/r/587aa8de1de0ba31/witness-me/audio/12.mp3?v=6", "duration": 1685}, {"title": "Chapter 13", "src": "/r/587aa8de1de0ba31/witness-me/audio/13.mp3?v=6", "duration": 1793}]}</script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/witness-me/audiobook-sw.js?v=6");
+      }
+    </script>
     <script src="/audiobook.js?v=2" defer></script>
   </body>
 </html>
