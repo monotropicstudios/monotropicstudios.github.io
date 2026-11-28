@@ -1,10 +1,9 @@
 var PARTS = [
   "audio/witness-me-audiobook.m4b.part-00",
   "audio/witness-me-audiobook.m4b.part-01",
-  "audio/witness-me-audiobook.m4b.part-02",
-  "audio/witness-me-audiobook.m4b.part-03"
+  "audio/witness-me-audiobook.m4b.part-02"
 ];
-var TOTAL = "339925342";
+var TOTAL = "206990256";
 
 self.addEventListener("install", function () {
   self.skipWaiting();

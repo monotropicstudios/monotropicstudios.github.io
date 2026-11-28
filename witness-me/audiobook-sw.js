@@ -1,10 +1,9 @@
 var PARTS = [
   "/r/587aa8de1de0ba31/witness-me/audio/witness-me-audiobook.m4b.part-00",
   "/r/587aa8de1de0ba31/witness-me/audio/witness-me-audiobook.m4b.part-01",
-  "/r/587aa8de1de0ba31/witness-me/audio/witness-me-audiobook.m4b.part-02",
-  "/r/587aa8de1de0ba31/witness-me/audio/witness-me-audiobook.m4b.part-03"
+  "/r/587aa8de1de0ba31/witness-me/audio/witness-me-audiobook.m4b.part-02"
 ];
-var TOTAL = "339925342";
+var TOTAL = "206990256";
 
 self.addEventListener("install", function () {
   self.skipWaiting();
